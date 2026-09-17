@@ -57,8 +57,8 @@ const CONTENIDO = {
   /* así que no cargues datos sensibles.                                  */
   /* ------------------------------------------------------------------ */
   firebase: {
-    apiKey: '',
-    projectId: '',
+    apiKey: 'AIzaSyBNcr89kDb58cLoXAfOZ4hPzRBIGJZJ_0E',
+    projectId: 'induccion-ba8d1',
     coleccion: 'personas',
     equipo: 'local-centro'     // permite separar grupos dentro de la misma base
   },
