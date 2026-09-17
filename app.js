@@ -742,11 +742,14 @@ function renderAvance() {
         <h3>Datos de este dispositivo</h3>
         <p class="sub">El avance se guarda solo en este celular. Fecha de inicio registrada: <b>${esc(E.inicio)}</b>.</p>
         <div class="btn-row">
+          <button class="btn sm dark" id="instalarApp">Instalar como app</button>
           <button class="btn sm ghost" id="reiniciarPlan">Reiniciar la fecha de inicio</button>
           <button class="btn sm ghost" id="borrarTodo">Borrar todo mi avance</button>
         </div>
       </div>
     </div>`;
+
+  $('#instalarApp').onclick = () => abrirInstalacion();
 
   $('#reiniciarPlan').onclick = () => {
     if (confirm('¿Empezar el plan de inducción desde hoy? Se mantiene tu avance.')) {
@@ -761,9 +764,169 @@ function renderAvance() {
 }
 
 /* ---------------------------------------------------------------- */
+/* Instalar como app (iPhone, Android y escritorio)                  */
+/*                                                                   */
+/* Android y Chrome de escritorio avisan con "beforeinstallprompt" y */
+/* se instalan con un toque. iOS NO tiene ese evento: la única forma */
+/* de instalar es Safari -> Compartir -> Agregar a inicio, así que   */
+/* ahí mostramos las instrucciones paso a paso.                      */
+/* ---------------------------------------------------------------- */
+const CLAVE_INST = 'induccion-instalar-oculto';
+const UA = navigator.userAgent || '';
+const ES_IOS = /iPad|iPhone|iPod/.test(UA) ||
+               (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const OTRO_NAV_IOS = /CriOS|FxiOS|EdgiOS|OPiOS|DuckDuckGo|GSA|FBAN|FBAV|Instagram|Line\//.test(UA);
+const ES_SAFARI_IOS = ES_IOS && !OTRO_NAV_IOS;
+
+let promptInstalacion = null;
+
+function appInstalada() {
+  return window.navigator.standalone === true ||
+         window.matchMedia('(display-mode: standalone)').matches ||
+         window.matchMedia('(display-mode: fullscreen)').matches;
+}
+
+function cerrarInstalacion() {
+  $('#instSheet').classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+function mostrarPanel({ titulo, sub, pasos = [], nota = '', acciones = [] }) {
+  $('#instTitulo').textContent = titulo;
+  $('#instSub').textContent = sub;
+  $('#instPasos').innerHTML = pasos
+    .map((t, i) => `<li><span class="n">${i + 1}</span><span>${t}</span></li>`).join('');
+  $('#instNota').innerHTML = nota ? `<div class="inst-nota">${nota}</div>` : '';
+
+  const cont = $('#instAcciones');
+  cont.innerHTML = '';
+  acciones.concat([{ txt: 'Entendido', clase: 'btn sm ghost' }]).forEach(a => {
+    const b = document.createElement('button');
+    b.className = a.clase || 'btn sm ghost';
+    b.textContent = a.txt;
+    b.onclick = () => { if (a.fn) a.fn(b); else cerrarInstalacion(); };
+    cont.appendChild(b);
+  });
+
+  $('#instSheet').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function copiarEnlace(boton) {
+  const url = location.href.split('#')[0];
+  const ok = () => { boton.textContent = '¡Enlace copiado!'; };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(url).then(ok)
+      .catch(() => window.prompt('Copiá este enlace y abrilo en Safari:', url));
+  } else {
+    window.prompt('Copiá este enlace y abrilo en Safari:', url);
+  }
+}
+
+function abrirInstalacion() {
+  if (appInstalada()) {
+    mostrarPanel({
+      titulo: 'Ya la estás usando como app',
+      sub: 'Esta ventana ya se abrió desde el ícono instalado, no hace falta instalar nada más.',
+      pasos: [],
+      nota: 'Tu avance se guarda en este dispositivo y la app sigue funcionando sin internet.'
+    });
+    return;
+  }
+
+  // Android / Chrome de escritorio: instalación en un toque.
+  if (promptInstalacion) {
+    const ev = promptInstalacion;
+    promptInstalacion = null;
+    ev.prompt();
+    ev.userChoice.then(r => {
+      if (r.outcome === 'accepted') ocultarBanner(true);
+      else promptInstalacion = ev;
+    }).catch(() => {});
+    return;
+  }
+
+  if (ES_SAFARI_IOS) {
+    mostrarPanel({
+      titulo: 'Instalala en tu iPhone',
+      sub: 'Toma unos segundos. Queda con ícono propio en la pantalla de inicio, se abre a pantalla completa (sin la barra de Safari) y funciona sin internet.',
+      pasos: [
+        'Tocá el botón <b>Compartir</b> <span class="ios-ic">↑</span> de Safari, abajo en el centro de la pantalla.',
+        'Deslizá la lista hacia abajo y elegí <b>Agregar a inicio</b> (<i>Add to Home Screen</i>).',
+        'Tocá <b>Agregar</b> arriba a la derecha. El ícono de la inducción queda en tu pantalla de inicio.'
+      ],
+      nota: 'Después abrila siempre desde ese ícono: ahí se ve como una app y tu avance queda guardado.'
+    });
+    return;
+  }
+
+  if (ES_IOS) {
+    mostrarPanel({
+      titulo: 'En iPhone se instala desde Safari',
+      sub: 'iOS solo permite instalar apps web desde Safari. Los demás navegadores del iPhone (Chrome, Edge, Firefox) apenas crean un acceso directo que se sigue abriendo dentro del navegador.',
+      pasos: [
+        'Copiá el enlace de esta página con el botón de abajo.',
+        'Abrí <b>Safari</b> y pegá el enlace.',
+        'Tocá <b>Compartir</b> <span class="ios-ic">↑</span> → <b>Agregar a inicio</b> → <b>Agregar</b>.'
+      ],
+      acciones: [{ txt: 'Copiar enlace', clase: 'btn sm dark', fn: copiarEnlace }]
+    });
+    return;
+  }
+
+  // Android sin el evento disponible todavía, o navegador de escritorio.
+  mostrarPanel({
+    titulo: 'Instalar la app',
+    sub: 'Tu navegador puede instalar esta inducción desde su propio menú.',
+    pasos: [
+      'Abrí el menú del navegador (los <b>⋮</b> arriba a la derecha).',
+      'Elegí <b>Instalar app</b> o <b>Agregar a la pantalla principal</b>.',
+      'Confirmá con <b>Instalar</b>.'
+    ],
+    nota: 'Si no aparece la opción: la página tiene que estar abierta desde su dirección https (por ejemplo la de GitHub Pages) y no como archivo local. Firefox de escritorio no instala apps web.'
+  });
+}
+
+function ocultarBanner(recordar) {
+  $('#instBanner').classList.remove('show');
+  document.body.classList.remove('con-banner');
+  if (recordar) { try { localStorage.setItem(CLAVE_INST, '1'); } catch (e) {} }
+}
+
+function mostrarBanner(textoBoton, subtexto) {
+  let oculto = false;
+  try { oculto = localStorage.getItem(CLAVE_INST) === '1'; } catch (e) {}
+  if (oculto || appInstalada()) return;
+  $('#instBannerBtn').textContent = textoBoton;
+  if (subtexto) $('#instBannerSub').textContent = subtexto;
+  $('#instBanner').classList.add('show');
+  document.body.classList.add('con-banner');
+}
+
+function iniciarInstalacion() {
+  $('#instBannerBtn').onclick = () => abrirInstalacion();
+  $('#instBannerX').onclick = () => ocultarBanner(true);
+  $('#instSheet').querySelector('[data-cerrar-inst]').onclick = () => cerrarInstalacion();
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarInstalacion(); });
+
+  window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault();
+    promptInstalacion = e;
+    mostrarBanner('Instalar', 'Ícono propio y uso sin internet.');
+  });
+
+  window.addEventListener('appinstalled', () => { promptInstalacion = null; ocultarBanner(true); });
+
+  if (ES_IOS && !appInstalada()) {
+    mostrarBanner(ES_SAFARI_IOS ? 'Instalar' : 'Cómo', 'Queda en tu pantalla de inicio.');
+  }
+}
+
+/* ---------------------------------------------------------------- */
 /* Arranque                                                          */
 /* ---------------------------------------------------------------- */
 ir('inicio');
+iniciarInstalacion();
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));

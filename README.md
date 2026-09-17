@@ -40,12 +40,31 @@ Esperá 1 o 2 minutos y GitHub te muestra la dirección, que va a ser algo así:
 https://miayala03.github.io/Control-de-Gestion/
 ```
 
-Abrí esa dirección en el celular. Para que quede como una app en la pantalla de inicio:
+Abrí esa dirección en el celular. La app te muestra sola un cartel abajo para instalarla
+(y siempre podés volver a verlo en **Avance → Instalar como app**).
 
-- **Android (Chrome):** menú de los tres puntos → *Agregar a pantalla principal* / *Instalar app*.
-- **iPhone (Safari):** botón de compartir → *Agregar a pantalla de inicio*.
+### Instalarla en un iPhone
 
-Una vez instalada, funciona también sin internet.
+En iPhone **hay que usar Safari**: iOS no deja que otros navegadores instalen apps web. Si abrís
+la página con Chrome en el iPhone, lo único que vas a poder hacer es un acceso directo que se
+sigue abriendo dentro de Chrome, no una app.
+
+1. Abrí la dirección en **Safari**.
+2. Tocá el botón **Compartir** (el cuadrado con la flecha hacia arriba, abajo en el centro).
+3. Deslizá y elegí **Agregar a inicio** (*Add to Home Screen*) → **Agregar**.
+
+Queda con ícono propio, se abre a pantalla completa (sin la barra del navegador) y funciona sin
+internet. A partir de ahí, abrila siempre desde ese ícono: el avance de cada persona se guarda en
+su propio teléfono.
+
+### Instalarla en Android
+
+Con Chrome alcanza con tocar **Instalar** en el cartel que aparece abajo, o entrar al menú de los
+tres puntos → *Instalar app* / *Agregar a pantalla principal*.
+
+> Para que se pueda instalar, la página tiene que estar abierta desde su dirección `https://...`
+> (la de GitHub Pages). Si abrís el archivo `index.html` directamente desde la computadora, el
+> navegador solo ofrece "crear acceso directo", no instalarla.
 
 ### Verla sin publicarla
 
@@ -100,11 +119,11 @@ contenido.js          TODOS los textos y preguntas  ← es el archivo que editan
 app.js                La lógica (navegación, notas, avance, cálculos). Mejor no tocar.
 manifest.webmanifest  Datos para que se pueda instalar como app en el celular
 sw.js                 Hace que funcione sin internet
-iconos/               Ícono de la app
+iconos/               Ícono de la app (el de 180 px es el que usa el iPhone)
 ```
 
 > Si cambian archivos y en el celular siguen viendo la versión vieja: en `sw.js`, cambien
-> `const VERSION = 'induccion-v1';` por `'induccion-v2'` (y así), y suban el cambio. Eso fuerza la
+> `const VERSION = 'induccion-v2';` por `'induccion-v3'` (y así), y suban el cambio. Eso fuerza la
 > actualización.
 
 ---
