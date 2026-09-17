@@ -1,0 +1,17 @@
+{
+  "name": "Inducción · Stock de Cocina (McDonald's)",
+  "short_name": "Inducción",
+  "description": "Plataforma interactiva de inducción para el puesto de Encargado de Stock de Cocina. Proyecto final de Control de Gestión.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FFF9EF",
+  "theme_color": "#DA291C",
+  "lang": "es",
+  "icons": [
+    { "src": "iconos/icono-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "iconos/icono-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "iconos/icono-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
