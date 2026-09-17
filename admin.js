@@ -79,8 +79,10 @@ function renderPorton() {
       </div>
     </div>`;
 
+  // Tantos círculos como dígitos tenga el PIN configurado, no un número fijo.
+  const largoPin = String(s.pin).length;
   const pintarPuntos = () => {
-    $('#pinPuntos').innerHTML = Array.from({ length: Math.max(4, tecleado.length) },
+    $('#pinPuntos').innerHTML = Array.from({ length: Math.max(largoPin, tecleado.length) },
       (_, i) => `<span class="${i < tecleado.length ? 'lleno' : ''}"></span>`).join('');
   };
   pintarPuntos();
