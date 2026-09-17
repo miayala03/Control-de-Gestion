@@ -73,8 +73,12 @@ avance*: la app arma un código (`IND1....`) que se manda por mensaje. El superv
 panel y la persona aparece en la lista.
 
 **Con Firebase (sincroniza sola).** Cada persona sincroniza automáticamente cada vez que supera una
-estación, cierra un turno o rinde, y el supervisor ve al equipo desde su propio teléfono. Los pasos
-están dentro del panel, en *Conexión*, y son:
+estación, cierra un turno o rinde, y el supervisor ve al equipo desde su propio teléfono.
+
+> 📘 **Paso a paso completo, para quien no sabe programar: [GUIA-FIREBASE.md](GUIA-FIREBASE.md).**
+> Incluye el paso de las reglas, que si se saltea hace que la app deje de sincronizar a los 30 días.
+
+En resumen:
 
 1. Crear un proyecto en `console.firebase.google.com` (gratis, sin tarjeta).
 2. En *Compilación → Firestore Database*, crear la base. **Dejar la que viene por defecto:** las
@@ -189,6 +193,7 @@ archivo (**History**).
 ## Qué archivo es cada cosa
 
 ```
+GUIA-FIREBASE.md      Cómo conectar la base de datos, paso a paso
 index.html            El esqueleto de la app (las pantallas se arman por JavaScript)
 estilos.css           Todo el diseño: colores, tipografías y componentes
 contenido.js          TODOS los textos y ejercicios  ← es el archivo que editan ustedes
