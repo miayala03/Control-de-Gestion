@@ -37,7 +37,7 @@ const CONTENIDO = {
   /* uso, no para proteger datos. Cambiá el PIN acá.                     */
   /* ------------------------------------------------------------------ */
   supervisor: {
-    pin: '2468',
+    pin: '55555',
     titulo: 'Acceso supervisor',
     ayuda: 'Panel de seguimiento de la inducción del equipo.'
   },
