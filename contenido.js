@@ -1,733 +1,448 @@
 /* ============================================================================
-   CONTENIDO DE LA APP  —  Editá SOLO este archivo para cambiar textos
-   ============================================================================
+   CONTENIDO — Inducción · Encargado de Stock de Cocina (McDonald's)
 
-   Proyecto final · Control de Gestión
-   Plataforma interactiva de inducción — Encargado de Stock de Cocina (McDonald's)
-
-   CÓMO EDITAR (no hace falta saber programar):
-   - Cambiá únicamente el texto que está entre comillas "asi".
-   - No borres las comillas, las comas, los corchetes [ ] ni las llaves { }.
-   - Si un texto lleva comillas adentro, usá comillas simples: 'asi'.
-   - Guardá el archivo y recargá la app.
-
-   Si algo se rompe, avisá: se vuelve a la versión anterior desde GitHub.
+   ESTE ES EL ARCHIVO QUE SE EDITA. Todo lo que se lee en la app está acá:
+   textos, ejercicios, respuestas correctas y devoluciones.
+   No hace falta tocar los demás archivos.
 ============================================================================ */
 
 const CONTENIDO = {
 
   /* ------------------------------------------------------------------ */
-  /* 1) DATOS GENERALES DEL PROYECTO                                     */
+  /* Datos del proyecto                                                  */
   /* ------------------------------------------------------------------ */
   proyecto: {
-    titulo: "Inducción · Stock de Cocina",
+    titulo: 'Inducción · Stock de Cocina',
     empresa: "McDonald's",
-    puesto: "Encargado de Stock de Cocina",
-    area: "Operaciones / Cocina",
-    materia: "Control de Gestión",
-    carrera: "Ing. en Sistemas de Producción",
-    docente: "CP Leidy Ríos Argaña",
-    integrantes: ["Miguel Ayala", "Katherine Espinola", "Lucas González"],
-    objetivo: "Que el nuevo colaborador domine su proceso, sus puntos de control y sus indicadores antes de operar solo.",
+    puesto: 'Encargado de Stock de Cocina',
+    area: 'Operaciones / Cocina',
+    materia: 'Control de Gestión',
+    carrera: 'Ing. en Sistemas de Producción',
+    docente: 'CP Leidy Ríos Argaña',
+    integrantes: ['Miguel Ayala', 'Katherine Espinola', 'Lucas González'],
     aviso: "Trabajo académico. No es material oficial de McDonald's; la marca y los colores se usan solo con fines educativos."
   },
 
-  /* ------------------------------------------------------------------ */
-  /* 2) METAS DEL PLAN DE INDUCCIÓN (se usan en la pantalla Avance)      */
-  /* ------------------------------------------------------------------ */
   metas: {
-    diasPlan: 15,            // la inducción debe completarse en 15 días
-    notaMinima: 80,          // nota mínima de cada evaluación, en %
-    cumplimientoMinimo: 90,  // cumplimiento del cronograma mínimo, en %
-    atrasadasMaximo: 0       // actividades atrasadas permitidas
+    notaMinima: 80,      // % para aprobar la certificación
+    estaciones: 8        // cuántas estaciones hay que superar
   },
 
   /* ------------------------------------------------------------------ */
-  /* 3) TEMPERATURAS DE REFERENCIA (tarjetas de la pantalla Inicio)      */
+  /* Rangos de temperatura: se usan en varios ejercicios                 */
   /* ------------------------------------------------------------------ */
-  referencias: [
-    { rotulo: "Congelado", valor: "−18 °C", nota: "cámara de congelados" },
-    { rotulo: "Refrigerado", valor: "0 a 4 °C", nota: "cadena de frío" },
-    { rotulo: "Depósito seco", valor: "15 a 22 °C", nota: "seco y ventilado" },
-    { rotulo: "Regla de oro", valor: "PEPS", nota: "primero entra, primero sale" }
+  zonas: [
+    { id: 'congelado',   nombre: 'Congelado',     icono: '❄️', rango: '−18 °C o menos', min: -30, max: -18 },
+    { id: 'refrigerado', nombre: 'Refrigerado',   icono: '🧊', rango: '0 a 4 °C',       min: 0,   max: 4 },
+    { id: 'seco',        nombre: 'Depósito seco', icono: '📦', rango: '15 a 22 °C',     min: 15,  max: 22 }
   ],
 
+  zonaRiesgo: { desde: 5, hasta: 60, texto: 'Zona de riesgo: las bacterias se multiplican rápido.' },
+
   /* ------------------------------------------------------------------ */
-  /* 4) MÓDULOS DE LA INDUCCIÓN                                          */
-  /*    Cada módulo tiene: lecciones + una evaluación de 3 preguntas     */
-  /*    "actividad" conecta el módulo con una práctica:                  */
-  /*    "recepcion" | "peps" | "checklist" | "kpi" | ""  (vacío = sin)   */
+  /* Las 8 estaciones de entrenamiento                                   */
+  /* El "briefing" es lo único que se lee: 3 líneas como máximo.          */
   /* ------------------------------------------------------------------ */
-  modulos: [
-
-    /* ---------------------------- MÓDULO 1 ---------------------------- */
+  estaciones: [
     {
-      id: "m1",
-      numero: 1,
-      titulo: "La empresa y el local",
-      tipo: "Obligatorio",
-      icono: "🏪",
-      resumen: "Dónde trabajás, cómo funciona un local estandarizado y por qué acá todo se mide.",
-      lecciones: [
-        {
-          titulo: "Una operación estandarizada",
-          texto: "McDonald's es una de las cadenas gastronómicas más estandarizadas del mundo: cada tarea del local sigue un procedimiento definido y documentado. Eso significa que casi nada se hace 'como a uno le parece': hay una forma correcta, escrita, que se puede enseñar y controlar.",
-          puntos: [
-            "Los procedimientos son repetibles: el mismo resultado en cualquier turno.",
-            "Cada actividad tiene un responsable claro.",
-            "Todo lo importante queda registrado."
-          ]
-        },
-        {
-          titulo: "Por qué el stock es tan sensible acá",
-          texto: "El local maneja un gran volumen de insumos perecederos, con exigencias de cadena de frío y vencimientos ajustados. Un error de stock impacta directo en dos cosas: el costo y la seguridad alimentaria. Por eso el control de inventario no es una tarea administrativa opcional, es parte esencial de la operación.",
-          puntos: [
-            "Insumos perecederos: se vencen, no esperan.",
-            "Cadena de frío: si se rompe, el producto se descarta.",
-            "Alta rotación de personal: la inducción tiene que ser clara y rápida."
-          ]
-        },
-        {
-          titulo: "Con quién te vas a relacionar",
-          texto: "Tu puesto está en el medio de varias áreas: recibís de Proveedores, coordinás con Compras, entregás a Producción/Cocina, informás a Administración y respondés a Supervisión de Cocina y al Gerente de Local. Calidad e Higiene controla que todo se cumpla.",
-          puntos: [
-            "Dependés del Supervisor de Cocina y, por encima, del Gerente de Local.",
-            "Trabajás con: Compras, Proveedores, Producción, Administración, Calidad e Higiene."
-          ]
-        }
+      id: 'recepcion', numero: 1, tipo: 'recepcion',
+      nombre: 'Recepción', icono: '🚚',
+      lema: 'Llegó el camión. Nada entra sin control.',
+      briefing: [
+        'Cotejá contra el remito: cantidad, estado, temperatura y vencimiento.',
+        'Se firma conforme solo si todo coincide.',
+        'Cadena de frío rota = se rechaza, no se discute.'
       ],
-      actividad: "",
-      evaluacion: [
-        {
-          pregunta: "¿Por qué el control de stock es esencial en este local y no solo 'papeleo'?",
-          opciones: [
-            "Porque lo pide la administración una vez al mes",
-            "Porque los insumos son perecederos y un error afecta el costo y la seguridad alimentaria",
-            "Porque hay que llenar planillas para el archivo"
-          ],
-          correcta: 1,
-          bien: "Exacto: el stock impacta directo en costos y en seguridad alimentaria.",
-          mal: "El motivo real es que son insumos perecederos: un error se traduce en pérdida de dinero y en riesgo sanitario."
-        },
-        {
-          pregunta: "¿Qué ventaja tiene que la operación esté estandarizada?",
-          opciones: [
-            "Que cada uno puede trabajar a su manera",
-            "Que los controles son visibles, repetibles y fáciles de enseñar",
-            "Que no hacen falta registros"
-          ],
-          correcta: 1,
-          bien: "Correcto. Estandarizar permite enseñar, repetir y controlar.",
-          mal: "Al estar estandarizado, el control se vuelve visible y repetible: se puede enseñar y medir."
-        },
-        {
-          pregunta: "¿De quién depende directamente el Encargado de Stock de Cocina?",
-          opciones: [
-            "Del Supervisor de Cocina",
-            "De los proveedores",
-            "De nadie, es un puesto independiente"
-          ],
-          correcta: 0,
-          bien: "Así es: Supervisor de Cocina y, por encima, Gerente de Local.",
-          mal: "La dependencia es: Gerente de Local → Supervisor de Cocina → Encargado de Stock."
-        }
-      ]
+      indicador: '% de discrepancias en recepción'
     },
-
-    /* ---------------------------- MÓDULO 2 ---------------------------- */
     {
-      id: "m2",
-      numero: 2,
-      titulo: "El cargo y sus responsabilidades",
-      tipo: "Obligatorio",
-      icono: "🧑‍🍳",
-      resumen: "Tu objetivo, tus seis funciones y qué se espera que asegures (no solo qué hacés).",
-      lecciones: [
-        {
-          titulo: "Objetivo de tu cargo",
-          texto: "Asegurar que todo insumo que ingresa se reciba, registre, conserve y consuma correctamente, evitando pérdidas y faltantes. Dicho más corto: que ningún insumo se pierda, se venza ni falte.",
-          puntos: [
-            "Sos un puesto operativo, pero con responsabilidad de control.",
-            "Tu trabajo se describe por lo que hacés y por lo que asegurás que no falle."
-          ]
-        },
-        {
-          titulo: "Tus seis funciones",
-          texto: "El ciclo completo del stock pasa por tus manos, de la puerta del local a la olla.",
-          puntos: [
-            "1. Recibir y cotejar mercadería contra el remito.",
-            "2. Registrar los ingresos y etiquetar con fecha.",
-            "3. Almacenar aplicando PEPS y cadena de frío.",
-            "4. Controlar vencimientos y stock mínimo.",
-            "5. Registrar salidas y mermas.",
-            "6. Realizar el recuento de inventario."
-          ]
-        },
-        {
-          titulo: "Tus errores se miden en plata",
-          texto: "Cada función tiene asociado un punto de control y un indicador. Por eso tu desempeño puede evaluarse de forma objetiva, con números y no con percepciones.",
-          puntos: [
-            "Mermas por vencimiento o mala rotación = dinero perdido.",
-            "Quiebres de stock = producción frenada y cliente molesto.",
-            "Diferencias de inventario = pérdidas o fallas de registro."
-          ]
-        }
+      id: 'zonas', numero: 2, tipo: 'zonas',
+      nombre: 'Dónde va cada cosa', icono: '🏬',
+      lema: 'Cada insumo tiene su temperatura.',
+      briefing: [
+        'Congelado −18 °C · Refrigerado 0 a 4 °C · Seco 15 a 22 °C.',
+        'Nada en contacto con el piso: estantería o pallet.',
+        'Guardar mal es perder el producto igual que tirarlo.'
       ],
-      actividad: "",
-      evaluacion: [
-        {
-          pregunta: "¿Cuál es, en una frase, el objetivo de tu cargo?",
-          opciones: [
-            "Que ningún insumo se pierda, venza ni falte",
-            "Comprar lo más barato posible",
-            "Cocinar cuando falta personal"
-          ],
-          correcta: 0,
-          bien: "Correcto: recibir, registrar, conservar y consumir bien todo lo que entra.",
-          mal: "Tu objetivo es que ningún insumo se pierda, se venza ni falte."
-        },
-        {
-          pregunta: "¿Qué hace que este puesto sea un puesto de control y no solo operativo?",
-          opciones: [
-            "Que usa uniforme",
-            "Que cada tarea tiene un punto de control y un indicador asociado",
-            "Que trabaja de noche"
-          ],
-          correcta: 1,
-          bien: "Tal cual: por eso se puede evaluar con indicadores.",
-          mal: "Lo que lo vuelve un puesto de control es que cada tarea tiene un punto de control y un indicador."
-        },
-        {
-          pregunta: "¿Cuántas etapas tiene el proceso de stock que está a tu cargo?",
-          opciones: ["Tres", "Seis", "Diez"],
-          correcta: 1,
-          bien: "Seis: recepción, registro, almacenamiento, vencimientos, salidas y recuento.",
-          mal: "Son seis etapas: recepción, registro, almacenamiento, vencimientos/stock mínimo, salidas y mermas, y recuento."
-        }
-      ]
+      indicador: '% de cumplimiento de temperaturas'
     },
-
-    /* ---------------------------- MÓDULO 3 ---------------------------- */
     {
-      id: "m3",
-      numero: 3,
-      titulo: "Proceso de stock: 6 etapas",
-      tipo: "Obligatorio",
-      icono: "📦",
-      resumen: "De la puerta a la olla. Cada etapa con su punto de control, su registro y su indicador.",
-      lecciones: [
-        {
-          titulo: "1. Recepción de mercadería",
-          texto: "Cuando llega el proveedor, cotejá lo que entra contra el remito y la orden de compra: cantidades, calidad, fecha de vencimiento y temperatura. No firmes 'conforme' si algo no coincide.",
-          control: "Se firma solo si todo coincide; lo no conforme se rechaza o se reclama.",
-          registro: "Remito y orden de compra firmados",
-          indicador: "% de discrepancias en recepción"
-        },
-        {
-          titulo: "2. Registro de entrada",
-          texto: "Cargá el ingreso en la planilla o el sistema y etiquetá cada producto con la fecha de recepción. Si no quedó registrado, para el control no existe.",
-          control: "Todo ingreso queda registrado y etiquetado con fecha.",
-          registro: "Planilla o sistema de stock",
-          indicador: "Ingresos registrados vs. recibidos"
-        },
-        {
-          titulo: "3. Almacenamiento (PEPS / FIFO)",
-          texto: "Guardá cada cosa donde va —seco, refrigerado o congelado— respetando las temperaturas. Lo nuevo atrás y lo viejo adelante: primero se usa lo que entró primero.",
-          control: "Rotación PEPS correcta y temperaturas dentro de rango.",
-          registro: "Planilla de control de temperaturas",
-          indicador: "% de cumplimiento de temperaturas"
-        },
-        {
-          titulo: "4. Control de vencimientos y stock mínimo",
-          texto: "Revisá las fechas y apartá lo que está por vencer para usarlo primero. Compará los niveles con el stock mínimo definido: si algo está bajo, hay que reponer antes de quedarse sin.",
-          control: "Nada vencido en uso; se repone antes del quiebre.",
-          registro: "Listado de vencimientos y stock mínimo",
-          indicador: "Cantidad de quiebres de stock"
-        },
-        {
-          titulo: "5. Registro de salidas y mermas",
-          texto: "Descontá lo que se usa y registrá las mermas: desperdicio, rotura, producto vencido. Anotar la merma no es delatarse, es dar información para mejorar.",
-          control: "Toda salida y merma queda justificada y registrada.",
-          registro: "Planilla de mermas",
-          indicador: "% de merma sobre compras"
-        },
-        {
-          titulo: "6. Recuento y ajuste (inventario)",
-          texto: "Cada cierto tiempo se cuenta físicamente el stock y se compara con lo que dice el sistema. Si hay diferencia, se ajusta y —lo más importante— se busca la causa.",
-          control: "La diferencia queda dentro de la tolerancia definida.",
-          registro: "Hoja de recuento de inventario",
-          indicador: "Diferencia de inventario (%)"
-        }
+      id: 'peps', numero: 3, tipo: 'peps',
+      nombre: 'PEPS en la estantería', icono: '🔄',
+      lema: 'Primero entra, primero sale.',
+      briefing: [
+        'Lo que vence antes va adelante; lo nuevo, atrás.',
+        'Ordená la estantería de izquierda (se usa primero) a derecha.'
       ],
-      actividad: "recepcion",
-      evaluacion: [
-        {
-          pregunta: "El remito dice 30 cajas de papas, pero contás 25 al recibir. ¿Qué hacés?",
-          opciones: [
-            "Firmo conforme y aviso después",
-            "Registro la diferencia y no firmo conforme; reclamo al proveedor",
-            "Guardo todo y ya se verá en el inventario"
-          ],
-          correcta: 1,
-          bien: "Exacto. La recepción es el punto de control: se firma solo si coincide.",
-          mal: "Si no coincide, no se firma conforme y se registra la diferencia para reclamar."
-        },
-        {
-          pregunta: "Llega mercadería nueva del mismo producto que ya tenés. ¿Dónde la ponés?",
-          opciones: [
-            "Adelante, para usarla primero",
-            "Detrás de la que ya estaba, para usar antes la más vieja",
-            "En cualquier lugar libre"
-          ],
-          correcta: 1,
-          bien: "Así es: lo nuevo atrás, se usa primero lo más viejo (PEPS).",
-          mal: "Por PEPS, lo nuevo va detrás: primero se usa lo que entró antes."
-        },
-        {
-          pregunta: "En el recuento el sistema dice 100 unidades y contás 80. ¿Qué corresponde?",
-          opciones: [
-            "Ajustar el sistema a 80 y buscar la causa de la diferencia",
-            "Dejar 100 en el sistema, ya aparecerán",
-            "Contar de nuevo hasta que dé 100"
-          ],
-          correcta: 0,
-          bien: "Correcto: se ajusta a lo real y se investiga el motivo.",
-          mal: "Se ajusta al conteo real y se busca la causa: merma no registrada, error de carga o faltante."
-        }
-      ]
+      indicador: 'Rotación de inventario'
     },
-
-    /* ---------------------------- MÓDULO 4 ---------------------------- */
     {
-      id: "m4",
-      numero: 4,
-      titulo: "Seguridad e higiene alimentaria",
-      tipo: "Obligatorio",
-      icono: "🧼",
-      resumen: "Cadena de frío, temperaturas, higiene personal y qué hacer ante un producto dudoso.",
-      lecciones: [
-        {
-          titulo: "Cadena de frío: no se negocia",
-          texto: "La cadena de frío es mantener el producto siempre dentro de su rango de temperatura, desde el proveedor hasta su uso. Si se corta —aunque sea un rato— el producto puede volverse inseguro incluso si 'se ve bien'.",
-          puntos: [
-            "Congelado: −18 °C o menos.",
-            "Refrigerado: entre 0 y 4 °C.",
-            "Depósito seco: 15 a 22 °C, seco y ventilado.",
-            "Zona de riesgo: entre 5 y 60 °C las bacterias se multiplican rápido."
-          ]
-        },
-        {
-          titulo: "Rutina de temperaturas",
-          texto: "Las temperaturas se miden y se anotan: si no está anotado, no hay evidencia de que se controló. Ante un valor fuera de rango, avisá de inmediato al Supervisor de Cocina y no uses el producto hasta que se defina qué hacer.",
-          puntos: [
-            "Medí y registrá al abrir, durante el turno y al cerrar.",
-            "Un valor fuera de rango es una alerta, no un detalle.",
-            "Producto dudoso: se separa, se rotula y se consulta. Nunca se usa 'por si acaso'."
-          ]
-        },
-        {
-          titulo: "Higiene personal y del depósito",
-          texto: "El insumo mejor controlado se contamina igual si el manipuleo es malo. Lavado de manos frecuente, uniforme limpio, pelo cubierto, nada de comer en zona de depósito.",
-          puntos: [
-            "Lavado de manos al ingresar, entre tareas y después de manipular residuos.",
-            "Nada en contacto directo con el piso: todo en estanterías o pallets.",
-            "Producto abierto: rotulado con fecha y cerrado correctamente.",
-            "Químicos de limpieza siempre separados de los alimentos."
-          ]
-        }
+      id: 'vencimientos', numero: 4, tipo: 'vencimientos',
+      nombre: 'Semáforo de vencimientos', icono: '📅',
+      lema: 'Revisión diaria del depósito.',
+      briefing: [
+        'Vencido: se retira y se registra como merma.',
+        'Vence hoy o mañana: se adelanta su uso.',
+        'Con margen: sigue su rotación normal.'
       ],
-      actividad: "checklist",
-      evaluacion: [
-        {
-          pregunta: "¿Cuál es el rango correcto de la heladera (refrigerado)?",
-          opciones: ["−18 °C o menos", "Entre 0 y 4 °C", "Entre 10 y 15 °C"],
-          correcta: 1,
-          bien: "Correcto. Por debajo de eso ya es congelado.",
-          mal: "Refrigerado va de 0 a 4 °C: −18 °C es congelado y 10–15 °C es zona de riesgo."
-        },
-        {
-          pregunta: "Encontrás un producto vencido en la heladera en pleno servicio. ¿Qué hacés?",
-          opciones: [
-            "Retirarlo, no usarlo y registrarlo como merma",
-            "Usarlo igual si parece estar bien",
-            "Devolverlo a su lugar y avisar mañana"
-          ],
-          correcta: 0,
-          bien: "Así es: se retira, no se usa y se registra como merma con su motivo.",
-          mal: "Vencido no se usa: se retira y se registra como merma."
-        },
-        {
-          pregunta: "Los medallones llegan a 12 °C. ¿Qué corresponde?",
-          opciones: [
-            "Recibirlos y meterlos rápido al freezer",
-            "No recibirlos: la cadena de frío se rompió y se reclama",
-            "Recibirlos y usarlos primero"
-          ],
-          correcta: 1,
-          bien: "Correcto. Cadena de frío rota: no se recibe y se reclama.",
-          mal: "Si llegan fuera de rango, la cadena de frío se rompió: no se reciben y se reclama al proveedor."
-        }
-      ]
+      indicador: '% de merma sobre compras'
     },
-
-    /* ---------------------------- MÓDULO 5 ---------------------------- */
     {
-      id: "m5",
-      numero: 5,
-      titulo: "Registros y sistema de carga",
-      tipo: "Obligatorio",
-      icono: "📝",
-      resumen: "Qué se anota, dónde se anota y por qué 'si no está registrado, no existe'.",
-      lecciones: [
-        {
-          titulo: "Si no está registrado, no existe",
-          texto: "El control de gestión trabaja con datos. Una tarea bien hecha pero no registrada no se puede medir, ni demostrar, ni mejorar. El registro es parte de la tarea, no un extra al final del turno.",
-          puntos: [
-            "Registrá en el momento, no de memoria al cierre.",
-            "Un dato dudoso anotado vale más que un dato perfecto olvidado.",
-            "Nunca 'arregles' un registro para que cierre: se corrige y se explica."
-          ]
-        },
-        {
-          titulo: "Tus registros del día",
-          texto: "Estos son los documentos con los que trabajás. Cada uno alimenta un indicador.",
-          puntos: [
-            "Remito y orden de compra firmados → % de discrepancias en recepción.",
-            "Planilla o sistema de stock (ingresos) → ingresos registrados vs. recibidos.",
-            "Planilla de temperaturas → % de cumplimiento de temperaturas.",
-            "Listado de vencimientos y stock mínimo → quiebres de stock.",
-            "Planilla de mermas → % de merma sobre compras.",
-            "Hoja de recuento → diferencia de inventario."
-          ]
-        },
-        {
-          titulo: "Cómo cargar bien un movimiento",
-          texto: "Cada movimiento necesita cuatro datos mínimos para servir: qué, cuánto, cuándo y por qué. En las mermas, el 'por qué' (motivo) es el dato más valioso: es lo que permite atacar la causa.",
-          puntos: [
-            "Producto e unidad de medida correcta (no mezcles cajas con unidades).",
-            "Cantidad exacta, contada, no estimada.",
-            "Fecha y turno.",
-            "Motivo en el caso de mermas: vencido, roto, quemado, desperdicio."
-          ]
-        }
+      id: 'frio', numero: 5, tipo: 'frio',
+      nombre: 'Cadena de frío', icono: '🌡️',
+      lema: 'Llevá cada producto a su temperatura.',
+      briefing: [
+        'Movés el termómetro hasta el rango correcto de cada insumo.',
+        'Entre 5 y 60 °C está la zona de riesgo: ahí no se guarda nada.'
       ],
-      actividad: "peps",
-      evaluacion: [
-        {
-          pregunta: "¿Para qué sirve registrar las mermas todos los días?",
-          opciones: [
-            "Para tener más papeleo",
-            "Para controlar costos, calcular el % de merma y encontrar sus causas",
-            "Para descontarle el costo a quien la generó"
-          ],
-          correcta: 1,
-          bien: "Tal cual: el dato alimenta el indicador y muestra dónde se pierde plata.",
-          mal: "Registrar mermas no castiga a nadie: da el dato para medir y atacar las causas."
-        },
-        {
-          pregunta: "¿Cuál es el dato más valioso al cargar una merma?",
-          opciones: ["El motivo", "El nombre del turno anterior", "El precio de venta"],
-          correcta: 0,
-          bien: "Correcto: el motivo es lo que permite corregir la causa.",
-          mal: "El motivo (vencido, roto, quemado, desperdicio) es lo que permite atacar la causa."
-        },
-        {
-          pregunta: "Te olvidaste de registrar un ingreso y ya terminó el turno. ¿Qué hacés?",
-          opciones: [
-            "Lo dejo así, el inventario lo va a corregir",
-            "Lo registro indicando la fecha real y aviso del olvido",
-            "Lo cargo con datos aproximados para que cierre"
-          ],
-          correcta: 1,
-          bien: "Bien: se corrige con el dato real y se avisa. Nunca se inventa para que cierre.",
-          mal: "Se registra con la fecha real y se avisa. Inventar datos rompe la confiabilidad del inventario."
-        }
-      ]
+      indicador: '% de cumplimiento de temperaturas'
     },
-
-    /* ---------------------------- MÓDULO 6 ---------------------------- */
     {
-      id: "m6",
-      numero: 6,
-      titulo: "Indicadores y costos",
-      tipo: "Complementario",
-      icono: "📊",
-      resumen: "Cómo se mide tu trabajo: merma, rotación, quiebres y diferencia de inventario.",
-      lecciones: [
-        {
-          titulo: "El ciclo de control",
-          texto: "Control de gestión es un ciclo de cuatro pasos que se repite: se fija un estándar, se mide el resultado real, se calcula el desvío y se define una acción correctiva. Sin acción, medir no sirve para nada.",
-          puntos: [
-            "ESTÁNDAR: nota mínima 80 %.",
-            "MEDICIÓN: resultado real 65 %.",
-            "DESVÍO: −15 puntos porcentuales.",
-            "ACCIÓN: módulo de refuerzo + práctica supervisada + nueva evaluación."
-          ]
-        },
-        {
-          titulo: "Los cuatro indicadores de tu puesto",
-          texto: "Convierten la rutina de la cocina en números comparables mes a mes.",
-          puntos: [
-            "% de merma = merma ÷ compras × 100. Qué parte de lo comprado se pierde.",
-            "Rotación de inventario = costo de mercadería usada ÷ stock promedio. Cuántas veces se renueva el stock.",
-            "Quiebres de stock = cantidad de veces que faltó un insumo.",
-            "Diferencia de inventario = |teórico − físico| ÷ teórico × 100. Cuánto se despega el sistema de la realidad."
-          ]
-        },
-        {
-          titulo: "Leer un indicador sin asustarse",
-          texto: "Un indicador no es una nota de conducta: es una señal. Lo importante no es el número solo, sino su tendencia y su causa. Rotación baja significa stock parado y plata inmovilizada; rotación muy alta puede significar riesgo de quiebre.",
-          puntos: [
-            "Mirá la tendencia, no un solo dato aislado.",
-            "Todo desvío necesita una causa identificada y una acción.",
-            "Un indicador que nadie usa para decidir es un indicador muerto."
-          ]
-        }
+      id: 'merma', numero: 6, tipo: 'merma',
+      nombre: 'Cargar una merma', icono: '📝',
+      lema: 'Si no está registrado, no existe.',
+      briefing: [
+        'Todo movimiento necesita cuatro datos: qué, cuánto, cuándo y por qué.',
+        'En la merma, el motivo es el dato más valioso: ataca la causa.'
       ],
-      actividad: "kpi",
-      evaluacion: [
-        {
-          pregunta: "Un insumo tiene una rotación de inventario muy baja. ¿Qué significa?",
-          opciones: [
-            "Se vende muy rápido",
-            "Hay mercadería inmovilizada que casi no se usa",
-            "Falta stock de ese insumo"
-          ],
-          correcta: 1,
-          bien: "Correcto: stock parado, plata inmovilizada y más riesgo de vencimiento.",
-          mal: "Rotación baja = mercadería que casi no se mueve: capital inmovilizado y riesgo de vencimiento."
-        },
-        {
-          pregunta: "¿Cómo se calcula el % de merma?",
-          opciones: [
-            "Merma ÷ compras × 100",
-            "Compras ÷ merma × 100",
-            "Merma ÷ ventas del día"
-          ],
-          correcta: 0,
-          bien: "Así es: qué parte de lo comprado se perdió.",
-          mal: "Es merma ÷ compras × 100: la porción de lo comprado que se perdió."
-        },
-        {
-          pregunta: "Tu evaluación dio 65 % y el estándar es 80 %. ¿Qué corresponde?",
-          opciones: [
-            "Nada, ya está rendida",
-            "Registrar el desvío y hacer módulo de refuerzo + nueva evaluación",
-            "Bajar el estándar a 65 %"
-          ],
-          correcta: 1,
-          bien: "Correcto: desvío de −15 puntos → acción correctiva y nueva medición.",
-          mal: "Un desvío exige acción correctiva: refuerzo, práctica supervisada y nueva evaluación."
-        }
-      ]
+      indicador: '% de merma sobre compras'
+    },
+    {
+      id: 'recuento', numero: 7, tipo: 'recuento',
+      nombre: 'Recuento de inventario', icono: '🔢',
+      lema: 'Contá el stock real y comparalo con el sistema.',
+      briefing: [
+        'Tocá cada bulto para contarlo: el conteo es físico, no estimado.',
+        'Diferencia = |teórico − físico| ÷ teórico × 100.',
+        'Tolerancia del local: hasta 2 %.'
+      ],
+      indicador: 'Diferencia de inventario (%)'
+    },
+    {
+      id: 'reposicion', numero: 8, tipo: 'reposicion',
+      nombre: 'Punto de pedido', icono: '📈',
+      lema: 'Reponer antes del quiebre, no después.',
+      briefing: [
+        'Punto de pedido = consumo diario × días de entrega + stock de seguridad.',
+        'Ajustá los valores y mirá si el stock aguanta la semana.'
+      ],
+      indicador: 'Quiebres de stock'
     }
   ],
 
   /* ------------------------------------------------------------------ */
-  /* 5) PRÁCTICA: SIMULACIÓN DE RECEPCIÓN                                */
-  /*    correcta: "recibir"  o  "reclamar"                               */
+  /* ESTACIÓN 1 — Recepción                                              */
+  /* accion correcta: 'recibir' | 'observar' | 'rechazar'                */
   /* ------------------------------------------------------------------ */
   recepcion: [
     {
-      icono: "🥬", nombre: "Lechuga",
-      datos: [["Remito", "20 bolsas"], ["Recibido", "20 bolsas"], ["Estado", "Fresca, sin golpes"]],
-      correcta: "recibir",
-      bien: "Bien. Cantidad y estado coinciden: se firma conforme.",
-      mal: "Acá todo coincide y está en buen estado: corresponde recibir conforme."
+      icono: '🥬', nombre: 'Lechuga', remito: '20 bolsas',
+      datos: [['Recibido', '20 bolsas', true], ['Estado', 'Fresca, sin golpes', true], ['Vence', 'en 5 días', true]],
+      correcta: 'recibir',
+      porque: 'Cantidad, estado y vencimiento coinciden: se firma conforme.'
     },
     {
-      icono: "🍔", nombre: "Medallones de carne",
-      datos: [["Remito", "8 cajas"], ["Recibido", "8 cajas"], ["Temperatura", "12 °C ⚠"]],
-      correcta: "reclamar",
-      bien: "Correcto. Llegaron a 12 °C: la cadena de frío se rompió, no se reciben.",
-      mal: "La cantidad está, pero llegaron a 12 °C. Cadena de frío rota: se reclama."
+      icono: '🍔', nombre: 'Medallones de carne', remito: '8 cajas',
+      datos: [['Recibido', '8 cajas', true], ['Temperatura', '12 °C', false], ['Vence', 'en 40 días', true]],
+      correcta: 'rechazar',
+      porque: 'Deberían venir a −18 °C y llegaron a 12 °C. La cadena de frío se rompió: no se recibe.'
     },
     {
-      icono: "🍞", nombre: "Pan de hamburguesa",
-      datos: [["Remito", "40 u"], ["Recibido", "40 u"], ["Vence", "en 1 día ⚠"]],
-      correcta: "reclamar",
-      bien: "Bien visto. Un vencimiento tan corto no sirve para el uso previsto.",
-      mal: "Vence en 1 día: es muy poco para usarlo. Se observa y se reclama."
+      icono: '🍟', nombre: 'Papas congeladas', remito: '30 cajas',
+      datos: [['Recibido', '25 cajas', false], ['Temperatura', '−19 °C', true], ['Estado', 'Sin daños', true]],
+      correcta: 'observar',
+      porque: 'Faltan 5 cajas. El producto está bien: se recibe lo que llegó, se deja constancia y se reclama la diferencia.'
     },
     {
-      icono: "🍟", nombre: "Papas congeladas",
-      datos: [["Remito", "30 cajas"], ["Recibido", "25 cajas ⚠"], ["Estado", "Ok"]],
-      correcta: "reclamar",
-      bien: "Exacto. Faltan 5 cajas: no se firma conforme y se registra la diferencia.",
-      mal: "Faltan 5 cajas respecto del remito: no se firma conforme, se reclama."
+      icono: '🍞', nombre: 'Pan de hamburguesa', remito: '40 unidades',
+      datos: [['Recibido', '40 unidades', true], ['Vence', 'mañana', false], ['Estado', 'Ok', true]],
+      correcta: 'rechazar',
+      porque: 'Un vencimiento de un día no alcanza para el uso previsto: se devuelve al proveedor.'
     },
     {
-      icono: "🧃", nombre: "Concentrado de gaseosa",
-      datos: [["Remito", "12 bidones"], ["Recibido", "12 bidones"], ["Estado", "1 bidón con pérdida ⚠"]],
-      correcta: "reclamar",
-      bien: "Correcto. Un envase dañado no se recibe conforme: se observa en el remito.",
-      mal: "Hay un envase con pérdida: se deja constancia en el remito y se reclama esa unidad."
+      icono: '🧃', nombre: 'Concentrado de gaseosa', remito: '12 bidones',
+      datos: [['Recibido', '12 bidones', true], ['Estado', '1 bidón con pérdida', false], ['Vence', 'en 6 meses', true]],
+      correcta: 'observar',
+      porque: 'Once bidones están bien. Se recibe con observación en el remito y se reclama la unidad dañada.'
     },
     {
-      icono: "🧀", nombre: "Queso cheddar",
-      datos: [["Remito", "15 cajas"], ["Recibido", "15 cajas"], ["Temperatura", "3 °C ✓"]],
-      correcta: "recibir",
-      bien: "Bien. Cantidad correcta y temperatura dentro de rango (0 a 4 °C).",
-      mal: "Todo coincide y 3 °C está dentro del rango de refrigerado: se recibe conforme."
+      icono: '🧀', nombre: 'Queso cheddar', remito: '15 cajas',
+      datos: [['Recibido', '15 cajas', true], ['Temperatura', '3 °C', true], ['Vence', 'en 20 días', true]],
+      correcta: 'recibir',
+      porque: 'Todo coincide y 3 °C está dentro del rango de refrigerado.'
     }
   ],
 
+  accionesRecepcion: [
+    { id: 'recibir',  rotulo: 'Recibir conforme', icono: '✓', ayuda: 'Todo coincide' },
+    { id: 'observar', rotulo: 'Recibir con observación', icono: '!', ayuda: 'Algo falta o está dañado' },
+    { id: 'rechazar', rotulo: 'Rechazar', icono: '✕', ayuda: 'No es apto para usar' }
+  ],
+
   /* ------------------------------------------------------------------ */
-  /* 6) PRÁCTICA: EJERCICIO PEPS                                         */
-  /*    "orden" = posición correcta de uso (1 = se usa primero)          */
+  /* ESTACIÓN 2 — Dónde va cada cosa                                     */
+  /* ------------------------------------------------------------------ */
+  zonasItems: [
+    { icono: '🍔', nombre: 'Medallones',    zona: 'congelado' },
+    { icono: '🍟', nombre: 'Papas',         zona: 'congelado' },
+    { icono: '🍦', nombre: 'Mix de helado', zona: 'congelado' },
+    { icono: '🥬', nombre: 'Lechuga',       zona: 'refrigerado' },
+    { icono: '🧀', nombre: 'Queso',         zona: 'refrigerado' },
+    { icono: '🥓', nombre: 'Panceta',       zona: 'refrigerado' },
+    { icono: '🍞', nombre: 'Pan',           zona: 'seco' },
+    { icono: '🧂', nombre: 'Sal y especias', zona: 'seco' },
+    { icono: '🥤', nombre: 'Vasos',         zona: 'seco' }
+  ],
+
+  /* ------------------------------------------------------------------ */
+  /* ESTACIÓN 3 — PEPS (el orden correcto es por fecha de vencimiento)   */
   /* ------------------------------------------------------------------ */
   peps: [
-    { nombre: "Medallones de carne", vence: "Vence 08/08", orden: 1 },
-    { nombre: "Pan de hamburguesa", vence: "Vence 10/08", orden: 2 },
-    { nombre: "Queso cheddar", vence: "Vence 12/08", orden: 3 },
-    { nombre: "Lechuga", vence: "Vence 14/08", orden: 4 },
-    { nombre: "Pepinillos", vence: "Vence 15/08", orden: 5 }
+    { icono: '🍔', nombre: 'Medallones',  vence: '08/08', orden: 1 },
+    { icono: '🍞', nombre: 'Pan',         vence: '10/08', orden: 2 },
+    { icono: '🧀', nombre: 'Queso',       vence: '12/08', orden: 3 },
+    { icono: '🥬', nombre: 'Lechuga',     vence: '14/08', orden: 4 },
+    { icono: '🥒', nombre: 'Pepinillos',  vence: '15/08', orden: 5 }
   ],
 
   /* ------------------------------------------------------------------ */
-  /* 7) PRÁCTICA: CHECKLIST DIARIO                                       */
+  /* ESTACIÓN 4 — Semáforo de vencimientos                               */
+  /* dias: días que faltan (negativo = ya venció)                        */
+  /* accion: 'descartar' | 'adelantar' | 'normal'                        */
   /* ------------------------------------------------------------------ */
-  checklist: [
-    ["Revisar temperaturas de heladeras y cámara", "Anotá el valor; deben estar dentro de rango"],
-    ["Controlar mercadería próxima a vencer", "Adelantá lo que vence primero (PEPS)"],
-    ["Cotejar entregas del día contra remitos", "No firmes conforme si algo no coincide"],
-    ["Registrar entradas y etiquetar con fecha", "Todo ingreso queda cargado en el sistema"],
-    ["Registrar mermas del servicio", "Desperdicio, rotura o vencido, con su motivo"],
-    ["Chequear niveles vs. stock mínimo", "Avisá qué hay que reponer para mañana"],
-    ["Ordenar el depósito y dejar nada en el piso", "Todo en estantería o pallet, rotulado"]
+  vencimientos: [
+    { icono: '🥬', nombre: 'Lechuga',      dias: -1, accion: 'descartar', porque: 'Venció ayer: se retira y se carga como merma.' },
+    { icono: '🧀', nombre: 'Queso',        dias: 0,  accion: 'adelantar', porque: 'Vence hoy: se usa en este turno o se pierde.' },
+    { icono: '🍞', nombre: 'Pan',          dias: 1,  accion: 'adelantar', porque: 'Vence mañana: se adelanta su uso.' },
+    { icono: '🥓', nombre: 'Panceta',      dias: 7,  accion: 'normal',    porque: 'Tiene margen: sigue su rotación normal.' },
+    { icono: '🍟', nombre: 'Papas',        dias: 45, accion: 'normal',    porque: 'Congelado con 45 días: rotación normal.' },
+    { icono: '🥫', nombre: 'Salsa abierta', dias: -3, accion: 'descartar', porque: 'Producto abierto y vencido hace 3 días: se descarta.' }
+  ],
+
+  accionesVencimiento: [
+    { id: 'descartar', rotulo: 'Descartar', icono: '🗑️', color: 'critico' },
+    { id: 'adelantar', rotulo: 'Usar hoy',  icono: '⏩', color: 'alerta' },
+    { id: 'normal',    rotulo: 'Dejar',     icono: '👍', color: 'bien' }
   ],
 
   /* ------------------------------------------------------------------ */
-  /* 8) CALCULADORAS DE INDICADORES (KPI)                                */
-  /*    No conviene editar las fórmulas si no sabés programar;           */
-  /*    los textos y los límites del semáforo sí se pueden cambiar.      */
+  /* ESTACIÓN 5 — Cadena de frío (llevar el termómetro al rango)         */
   /* ------------------------------------------------------------------ */
-  kpis: [
-    {
-      etiqueta: "Desperdicio", titulo: "% de merma",
-      ayuda: "Qué parte de lo comprado se pierde.",
-      formula: "merma ÷ compras × 100",
-      campos: [{ clave: "merma", rotulo: "Merma ($)" }, { clave: "compras", rotulo: "Compras ($)" }],
-      calcular: v => v.compras > 0 ? v.merma / v.compras * 100 : null,
-      formato: x => x.toFixed(1).replace('.', ',') + ' %',
-      semaforo: x => x < 2 ? ["Bajo · bajo control", "bien"] : x <= 5 ? ["Medio · vigilalo", "medio"] : ["Alto · atacar la causa", "mal"]
-    },
-    {
-      etiqueta: "Rotación", titulo: "Rotación de inventario",
-      ayuda: "Cuántas veces se renueva el stock.",
-      formula: "costo usado ÷ stock promedio",
-      campos: [{ clave: "costo", rotulo: "Costo mercadería usada ($)" }, { clave: "prom", rotulo: "Stock promedio ($)" }],
-      calcular: v => v.prom > 0 ? v.costo / v.prom : null,
-      formato: x => x.toFixed(1).replace('.', ',') + ' veces',
-      semaforo: x => x < 2 ? ["Baja · stock inmovilizado", "medio"] : x <= 8 ? ["Saludable", "bien"] : ["Muy alta · riesgo de quiebre", "medio"]
-    },
-    {
-      etiqueta: "Faltantes", titulo: "Quiebres de stock",
-      ayuda: "Veces que faltó un insumo en el período.",
-      formula: "conteo de faltantes",
-      campos: [{ clave: "q", rotulo: "N.º de quiebres" }],
-      calcular: v => v.q >= 0 ? v.q : null,
-      formato: x => Math.round(x) + (Math.round(x) === 1 ? ' quiebre' : ' quiebres'),
-      semaforo: x => x === 0 ? ["Sin faltantes", "bien"] : x <= 2 ? ["Pocos · mejorable", "medio"] : ["Muchos · revisar compras", "mal"]
-    },
-    {
-      etiqueta: "Exactitud", titulo: "Diferencia de inventario",
-      ayuda: "Cuánto se despega el sistema de la realidad.",
-      formula: "|teórico − físico| ÷ teórico × 100",
-      campos: [{ clave: "teo", rotulo: "Stock teórico (sistema)" }, { clave: "fis", rotulo: "Stock físico (contado)" }],
-      calcular: v => v.teo > 0 ? Math.abs(v.teo - v.fis) / v.teo * 100 : null,
-      formato: x => x.toFixed(1).replace('.', ',') + ' %',
-      semaforo: x => x < 2 ? ["Exacto", "bien"] : x <= 5 ? ["Aceptable · revisar", "medio"] : ["Alta · investigar causa", "mal"]
-    }
+  frio: [
+    { icono: '🍔', nombre: 'Medallones de carne', zona: 'congelado' },
+    { icono: '🥬', nombre: 'Lechuga',             zona: 'refrigerado' },
+    { icono: '🍞', nombre: 'Pan de hamburguesa',  zona: 'seco' },
+    { icono: '🍦', nombre: 'Mix de helado',       zona: 'congelado' }
   ],
 
   /* ------------------------------------------------------------------ */
-  /* 9) AUTOEVALUACIÓN FINAL                                             */
+  /* ESTACIÓN 6 — Cargar una merma                                       */
   /* ------------------------------------------------------------------ */
-  evaluacionFinal: [
-    {
-      pregunta: "El remito dice 30 cajas de papas, pero contás 25 al recibir. ¿Qué hacés?",
-      opciones: ["Firmo conforme y aviso después", "Registro la diferencia y no firmo conforme; reclamo al proveedor", "Guardo todo y ya se verá en el inventario"],
-      correcta: 1,
-      bien: "Exacto. La recepción es el punto de control: se firma solo si coincide.",
-      mal: "Si no coincide, no se firma conforme: se registra la diferencia y se reclama."
-    },
-    {
-      pregunta: "¿Qué significa aplicar PEPS (o FIFO) al guardar la mercadería?",
-      opciones: ["Usar primero lo más caro", "Usar primero lo que entró primero", "Usar lo que está adelante, sea nuevo o viejo"],
-      correcta: 1,
-      bien: "Correcto. Primero entra, primero sale.",
-      mal: "PEPS = primero entra, primero sale: lo más viejo se usa antes."
-    },
-    {
-      pregunta: "En pleno servicio encontrás un producto vencido. ¿Qué corresponde?",
-      opciones: ["Retirarlo, no usarlo y registrarlo como merma", "Usarlo igual si parece estar bien", "Devolverlo a su lugar y avisar mañana"],
-      correcta: 0,
-      bien: "Así es: se retira, no se usa y se registra como merma.",
-      mal: "Vencido no se usa: se retira y se registra como merma con su motivo."
-    },
-    {
-      pregunta: "¿Para qué sirve registrar las mermas todos los días?",
-      opciones: ["Para tener más papeleo", "Para controlar costos, calcular el % de merma y encontrar sus causas", "Para descontarle el costo a quien la generó"],
-      correcta: 1,
-      bien: "Tal cual. La merma registrada alimenta el indicador.",
-      mal: "Da el dato para medir el % de merma y atacar sus causas."
-    },
-    {
-      pregunta: "¿Cuál es el rango de temperatura correcto para la heladera?",
-      opciones: ["−18 °C o menos", "Entre 0 y 4 °C", "Entre 10 y 15 °C"],
-      correcta: 1,
-      bien: "Correcto. El refrigerado va de 0 a 4 °C.",
-      mal: "Refrigerado: 0 a 4 °C. −18 °C es congelado y 10–15 °C es zona de riesgo."
-    },
-    {
-      pregunta: "¿Para qué sirve tener definido un stock mínimo?",
-      opciones: ["Para comprar siempre la misma cantidad", "Para saber cuándo reponer antes de quedarse sin", "Para llenar todo el depósito"],
-      correcta: 1,
-      bien: "Tal cual: es la alarma que avisa antes del quiebre.",
-      mal: "Marca el punto en que hay que reponer para no quedarse sin insumo."
-    },
-    {
-      pregunta: "Llega mercadería nueva del mismo producto que ya tenés. ¿Dónde la ponés?",
-      opciones: ["Adelante, para usarla primero", "Detrás de la que ya estaba", "En cualquier lugar libre"],
-      correcta: 1,
-      bien: "Así es: lo nuevo atrás.",
-      mal: "Lo nuevo va detrás de lo viejo, por PEPS."
-    },
-    {
-      pregunta: "En el recuento el sistema dice 100 y contás 80. ¿Qué hacés?",
-      opciones: ["Ajusto a 80 y busco la causa", "Dejo 100, ya aparecerán", "Cuento hasta que dé 100"],
-      correcta: 0,
-      bien: "Correcto: se ajusta a lo real y se investiga.",
-      mal: "Se ajusta al conteo real y se busca la causa de la diferencia."
-    },
-    {
-      pregunta: "¿Cuál de estos es un ejemplo de merma?",
-      opciones: ["Una hamburguesa que se vendió", "Papas que se quemaron y se tiraron", "Un insumo que sigue en stock"],
-      correcta: 1,
-      bien: "Exacto: producto que se pierde sin venderse.",
-      mal: "Merma es lo que se pierde sin venderse: quemado, roto, vencido o desperdiciado."
-    },
-    {
-      pregunta: "Un insumo tiene rotación de inventario muy baja. ¿Qué significa?",
-      opciones: ["Se vende muy rápido", "Hay mercadería inmovilizada que casi no se usa", "Falta stock de ese insumo"],
-      correcta: 1,
-      bien: "Correcto: stock parado y riesgo de vencimiento.",
-      mal: "Rotación baja = mercadería que casi no se mueve."
-    },
-    {
-      pregunta: "Los medallones llegan a 12 °C con la cantidad correcta. ¿Qué hacés?",
-      opciones: ["Recibo conforme, la cantidad está bien", "No recibo: cadena de frío rota, y reclamo", "Recibo y los uso primero"],
-      correcta: 1,
-      bien: "Correcto. La temperatura también es parte del control de recepción.",
-      mal: "Aunque la cantidad esté bien, la cadena de frío se rompió: no se recibe."
-    },
-    {
-      pregunta: "Tu evaluación dio 65 % y el estándar es 80 %. ¿Qué pasa según el ciclo de control?",
-      opciones: ["Nada", "Se registra el desvío y se hace un refuerzo con nueva evaluación", "Se baja el estándar"],
-      correcta: 1,
-      bien: "Exacto: estándar → medición → desvío → acción correctiva.",
-      mal: "Un desvío exige acción: refuerzo, práctica supervisada y nueva evaluación."
-    }
-  ]
+  merma: {
+    caso: 'Durante el servicio se queman 3 kg de medallones de carne en la plancha.',
+    campos: [
+      { clave: 'producto', rotulo: 'Producto', tipo: 'opciones',
+        opciones: ['Medallones de carne', 'Pan de hamburguesa', 'Papas congeladas'], correcta: 'Medallones de carne',
+        error: 'El caso habla de medallones de carne.' },
+      { clave: 'cantidad', rotulo: 'Cantidad', tipo: 'opciones',
+        opciones: ['3', '1', 'Unos pocos'], correcta: '3',
+        error: 'La cantidad va contada y exacta, nunca estimada.' },
+      { clave: 'unidad', rotulo: 'Unidad', tipo: 'opciones',
+        opciones: ['kg', 'cajas', 'unidades'], correcta: 'kg',
+        error: 'No mezcles unidades: el caso está en kilos.' },
+      { clave: 'turno', rotulo: 'Cuándo', tipo: 'opciones',
+        opciones: ['Hoy, turno tarde', 'Esta semana', 'Lo cargo mañana'], correcta: 'Hoy, turno tarde',
+        error: 'Se registra en el momento y con su turno, no de memoria al cierre.' },
+      { clave: 'motivo', rotulo: 'Motivo', tipo: 'opciones',
+        opciones: ['Quemado en plancha', 'Otro', 'Sin especificar'], correcta: 'Quemado en plancha',
+        error: 'El motivo es lo que permite atacar la causa: "otro" no sirve para nada.' }
+    ],
+    cierre: 'Con esos cuatro datos —qué, cuánto, cuándo y por qué— la merma alimenta el indicador y se puede corregir la causa.'
+  },
+
+  /* ------------------------------------------------------------------ */
+  /* ESTACIÓN 7 — Recuento de inventario                                 */
+  /* ------------------------------------------------------------------ */
+  recuento: {
+    producto: 'Cajas de medallones de carne',
+    teorico: 26,        // lo que dice el sistema
+    fisico: 24,         // lo que hay de verdad en la cámara
+    tolerancia: 2       // % aceptado por el local
+  },
+
+  /* ------------------------------------------------------------------ */
+  /* ESTACIÓN 8 — Punto de pedido                                        */
+  /* ------------------------------------------------------------------ */
+  reposicion: {
+    producto: 'Cajas de papas congeladas',
+    stockInicial: 40,
+    consumoReal: [7, 9, 8, 12, 14, 15, 10],   // lo que se consume cada día de la semana
+    dias: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
+    entrega: 2,          // días que tarda el proveedor
+    consumoSugerido: 11,
+    seguridadSugerida: 8
+  },
+
+  /* ------------------------------------------------------------------ */
+  /* SIMULADOR DE TURNO                                                  */
+  /* Cada opción mueve los indicadores del local.                        */
+  /* merma en $ · quiebres en cantidad · exactitud en puntos %           */
+  /* ------------------------------------------------------------------ */
+  turno: {
+    inicial: { merma: 0, quiebres: 0, exactitud: 100 },
+    // Compras del turno. Está calibrado para que un turno jugado perfecto
+    // caiga justo en el estándar de merma: las pérdidas inevitables del día
+    // ($48.000) son el 2 % de esta cifra.
+    compras: 2400000,
+    estandar: { merma: 2, quiebres: 0, exactitud: 98 },
+    eventos: [
+      {
+        hora: '07:10', icono: '🚚',
+        situacion: 'Llega el proveedor con 30 cajas de papas, pero el remito dice 35 y el chofer tiene apuro.',
+        opciones: [
+          { texto: 'Firmo conforme para no demorarlo', efecto: { merma: 45000, quiebres: 1, exactitud: -4 }, puntos: 0,
+            nota: 'Firmaste por 35 y entraron 30: pagás 5 cajas que no tenés y el sistema queda mal.' },
+          { texto: 'Cuento, anoto 30 y dejo constancia en el remito', efecto: {}, puntos: 10,
+            nota: 'Correcto. La recepción es el punto de control: se firma lo que realmente entró.' },
+          { texto: 'Recibo todo y lo reviso más tarde', efecto: { merma: 20000, exactitud: -3 }, puntos: 3,
+            nota: 'Después el chofer ya no está y el reclamo se pierde. Se cuenta en el momento.' }
+        ]
+      },
+      {
+        hora: '07:40', icono: '🌡️',
+        situacion: 'La cámara de congelados marca −9 °C. Debería estar en −18 °C.',
+        opciones: [
+          { texto: 'Aviso al supervisor y no uso el producto hasta que se defina', efecto: {}, puntos: 10,
+            nota: 'Así es. Un valor fuera de rango es una alerta, y el producto dudoso no se usa.' },
+          { texto: 'Anoto el valor y sigo trabajando normal', efecto: { merma: 60000, exactitud: -2 }, puntos: 2,
+            nota: 'Anotar sin actuar no sirve: el producto se sigue deteriorando.' },
+          { texto: 'Bajo el termostato y no lo registro', efecto: { merma: 80000, exactitud: -5 }, puntos: 0,
+            nota: 'Sin registro no hay evidencia del control ni forma de encontrar la causa.' }
+        ]
+      },
+      {
+        hora: '09:15', icono: '📦',
+        situacion: 'Entra pan nuevo y en la estantería todavía queda pan de anteayer.',
+        opciones: [
+          { texto: 'Pongo el nuevo adelante, que es más cómodo', efecto: { merma: 35000 }, puntos: 0,
+            nota: 'Así se vence el viejo en el fondo. PEPS: lo nuevo va atrás.' },
+          { texto: 'Pongo el nuevo atrás y adelanto el de anteayer', efecto: {}, puntos: 10,
+            nota: 'Correcto: primero entra, primero sale.' },
+          { texto: 'Mezclo todo en la misma bandeja', efecto: { merma: 25000, exactitud: -2 }, puntos: 1,
+            nota: 'Sin orden no hay rotación posible ni conteo confiable.' }
+        ]
+      },
+      {
+        hora: '11:30', icono: '🔥',
+        situacion: 'Se queman 3 kg de medallones en la plancha en pleno pico de servicio.',
+        opciones: [
+          { texto: 'Los descarto y sigo; después veo si lo anoto', efecto: { merma: 30000, exactitud: -4 }, puntos: 2,
+            nota: 'La merma no registrada desaparece del indicador y reaparece como diferencia de inventario.' },
+          { texto: 'Los descarto y cargo la merma con el motivo', efecto: { merma: 30000 }, puntos: 10,
+            nota: 'Bien. La pérdida ya ocurrió; registrarla con motivo es lo que permite corregir la causa.' },
+          { texto: 'Los sirvo igual, apenas se ven quemados', efecto: { merma: 30000, exactitud: -6 }, puntos: 0,
+            nota: 'Nunca. Producto no apto no se sirve: es calidad y es seguridad alimentaria.' }
+        ]
+      },
+      {
+        hora: '13:00', icono: '⚠️',
+        situacion: 'Quedan 4 cajas de papas y el proveedor tarda 2 días. Se consumen unas 12 por día.',
+        opciones: [
+          { texto: 'Espero al pedido semanal del jueves', efecto: { quiebres: 2, merma: 15000 }, puntos: 0,
+            nota: 'Con 4 cajas no llegás ni a mañana: quiebre en pleno servicio.' },
+          { texto: 'Aviso a Compras hoy para pedido urgente', efecto: {}, puntos: 10,
+            nota: 'Correcto: estás por debajo del punto de pedido, hay que reponer ya.' },
+          { texto: 'Uso menos papas por porción para estirar el stock', efecto: { quiebres: 1, exactitud: -3 }, puntos: 0,
+            nota: 'Cambiar la porción rompe el estándar del producto. El problema es de reposición.' }
+        ]
+      },
+      {
+        hora: '15:20', icono: '🥬',
+        situacion: 'Encontrás una caja de lechuga vencida ayer, todavía cerrada y con buen aspecto.',
+        opciones: [
+          { texto: 'La uso: está cerrada y se ve bien', efecto: { merma: 18000, exactitud: -6 }, puntos: 0,
+            nota: 'Vencido no se usa, aunque se vea bien. Es riesgo sanitario.' },
+          { texto: 'La retiro, la registro como merma y reviso por qué no rotó', efecto: { merma: 18000 }, puntos: 10,
+            nota: 'Exacto: se retira, se registra y se busca la causa de la mala rotación.' },
+          { texto: 'La dejo para el personal', efecto: { merma: 18000, exactitud: -4 }, puntos: 0,
+            nota: 'Producto vencido no se consume ni se regala: se descarta y se registra.' }
+        ]
+      },
+      {
+        hora: '18:45', icono: '🔢',
+        situacion: 'Recuento de cierre: el sistema dice 48 cajas y contás 46.',
+        opciones: [
+          { texto: 'Ajusto el sistema a 46 y busco la causa de la diferencia', efecto: { exactitud: -2 }, puntos: 10,
+            nota: 'Bien. Se ajusta a la realidad y —lo más importante— se busca por qué pasó.' },
+          { texto: 'Dejo 48, la diferencia es chica', efecto: { exactitud: -8 }, puntos: 0,
+            nota: 'El sistema queda mintiendo y la diferencia crece mes a mes.' },
+          { texto: 'Cuento de nuevo y si da 46, lo cargo sin avisar a nadie', efecto: { exactitud: -4 }, puntos: 5,
+            nota: 'Recontar está bien, pero la diferencia se informa: es un dato de control.' }
+        ]
+      },
+      {
+        hora: '22:30', icono: '🧹',
+        situacion: 'Cierre de turno. Quedaron cajas apoyadas en el piso del depósito y planillas sin cargar.',
+        opciones: [
+          { texto: 'Cierro y lo dejo para el turno de mañana', efecto: { merma: 12000, exactitud: -5 }, puntos: 0,
+            nota: 'El registro es parte de la tarea, no un extra. Y nada va en el piso.' },
+          { texto: 'Subo todo a estantería y cargo las planillas antes de irme', efecto: {}, puntos: 10,
+            nota: 'Cierre correcto: depósito ordenado y datos del día cargados.' },
+          { texto: 'Cargo las planillas de memoria mañana temprano', efecto: { exactitud: -6 }, puntos: 2,
+            nota: 'De memoria el dato se deforma. Se registra en el momento.' }
+        ]
+      }
+    ]
+  },
+
+  /* ------------------------------------------------------------------ */
+  /* CERTIFICACIÓN — evaluación final                                    */
+  /* ------------------------------------------------------------------ */
+  examen: [
+    { pregunta: 'El remito dice 30 cajas de papas, pero contás 25 al recibir. ¿Qué hacés?',
+      opciones: ['Firmo conforme y aviso después', 'Registro la diferencia, no firmo conforme y reclamo', 'Guardo todo y se verá en el inventario'],
+      correcta: 1, porque: 'La recepción es el punto de control: se firma solo lo que realmente entró.' },
+    { pregunta: '¿Qué significa aplicar PEPS al guardar la mercadería?',
+      opciones: ['Usar primero lo más caro', 'Usar primero lo que entró primero', 'Usar lo que está adelante, sea nuevo o viejo'],
+      correcta: 1, porque: 'PEPS: primero entra, primero sale. Lo más viejo se usa antes.' },
+    { pregunta: 'En pleno servicio encontrás un producto vencido. ¿Qué corresponde?',
+      opciones: ['Retirarlo, no usarlo y registrarlo como merma', 'Usarlo si parece estar bien', 'Devolverlo a su lugar y avisar mañana'],
+      correcta: 0, porque: 'Se retira, no se usa y se registra con su motivo.' },
+    { pregunta: '¿Cuál es el rango correcto de la heladera (refrigerado)?',
+      opciones: ['−18 °C o menos', 'Entre 0 y 4 °C', 'Entre 10 y 15 °C'],
+      correcta: 1, porque: 'Refrigerado va de 0 a 4 °C. −18 °C es congelado; 10 a 15 °C es zona de riesgo.' },
+    { pregunta: '¿Para qué sirve tener definido un stock mínimo?',
+      opciones: ['Para comprar siempre lo mismo', 'Para saber cuándo reponer antes de quedarse sin', 'Para llenar el depósito'],
+      correcta: 1, porque: 'Es la alarma que avisa antes del quiebre.' },
+    { pregunta: '¿Cómo se calcula el % de merma?',
+      opciones: ['Merma ÷ compras × 100', 'Merma ÷ ventas × 100', 'Compras ÷ merma × 100'],
+      correcta: 0, porque: 'Merma sobre compras: qué parte de lo comprado se perdió.' },
+    { pregunta: 'La rotación de inventario da muy baja. ¿Qué significa?',
+      opciones: ['Que se vende muchísimo', 'Que hay stock parado y plata inmovilizada', 'Que falta mercadería'],
+      correcta: 1, porque: 'Rotación baja = stock quieto. Muy alta, en cambio, avisa riesgo de quiebre.' },
+    { pregunta: '¿Por qué se registra la merma todos los días?',
+      opciones: ['Para tener más papeleo', 'Para medir el % de merma y atacar sus causas', 'Para descontársela a quien la generó'],
+      correcta: 1, porque: 'El dato registrado alimenta el indicador y permite corregir.' },
+    { pregunta: 'Los cuatro pasos del ciclo de control de gestión son:',
+      opciones: ['Comprar, guardar, usar, contar', 'Estándar, medición, desvío, acción correctiva', 'Planificar, delegar, esperar, informar'],
+      correcta: 1, porque: 'Sin acción correctiva, medir no sirve de nada.' },
+    { pregunta: 'Medís la cámara y da −9 °C cuando debería estar a −18 °C. ¿Qué hacés?',
+      opciones: ['Lo anoto y sigo', 'Aviso al supervisor y no uso el producto hasta definir', 'Lo corrijo y no lo anoto'],
+      correcta: 1, porque: 'Se avisa, se separa el producto dudoso y se registra todo.' }
+  ],
+
+  /* ------------------------------------------------------------------ */
+  /* Mapa del puesto (Inicio) — se toca cada área y muestra el vínculo   */
+  /* ------------------------------------------------------------------ */
+  mapa: {
+    centro: { icono: '📦', nombre: 'Vos', detalle: 'Encargado de Stock de Cocina' },
+    nodos: [
+      { icono: '🚛', nombre: 'Proveedores',   detalle: 'Te entregan la mercadería. Cotejás contra el remito y firmás.' },
+      { icono: '🛒', nombre: 'Compras',       detalle: 'Les avisás qué reponer y cuándo, antes del quiebre.' },
+      { icono: '👨‍🍳', nombre: 'Producción',    detalle: 'Les entregás los insumos del turno y registrás la salida.' },
+      { icono: '🧾', nombre: 'Administración', detalle: 'Reciben tus planillas: son la base de los indicadores.' },
+      { icono: '👔', nombre: 'Supervisión',   detalle: 'Tu jefe directo. Le informás desvíos y alertas.' },
+      { icono: '🧽', nombre: 'Calidad e Higiene', detalle: 'Controlan temperaturas, rotulado y limpieza del depósito.' }
+    ]
+  }
 };

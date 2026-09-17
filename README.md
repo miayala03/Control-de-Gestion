@@ -1,7 +1,7 @@
 # Plataforma Interactiva de Inducción — Encargado de Stock de Cocina (McDonald's)
 
-App para celular (se instala como una app, funciona sin internet) para la inducción de una
-persona que entra al puesto de **Encargado de Stock de Cocina**.
+**Simulador del puesto** para celular (se instala como app y funciona sin internet): la persona
+que entra como **Encargado de Stock de Cocina** no lee un manual, practica el trabajo.
 
 Proyecto final · **Control de Gestión** · Ing. en Sistemas de Producción · Docente: CP Leidy Ríos Argaña
 Integrantes: Miguel Ayala · Katherine Espinola · Lucas González
@@ -12,16 +12,30 @@ Integrantes: Miguel Ayala · Katherine Espinola · Lucas González
 
 ## Qué hace la app
 
+Casi todo es práctica: se arrastra, se toca, se decide y la app devuelve el resultado.
+
 | Pantalla | Qué tiene |
 |---|---|
-| **Inicio** | Bienvenida, el puesto, temperaturas de referencia, barra de avance, riesgos de una inducción insuficiente y la ficha del proyecto. |
-| **Módulos** | Los 6 módulos de la inducción. Cada uno tiene lecciones desplegables (con punto de control, registro e indicador) y una evaluación de 3 preguntas. Se aprueba con 80 %. |
-| **Practicá** | 1) Simulación de recepción (recibir o reclamar 6 entregas), 2) Ejercicio de PEPS, 3) Checklist diario con barra de avance, 4) Calculadoras de KPI con semáforo, 5) Evaluación final de 12 preguntas. |
-| **Avance** | El dashboard del supervisor: avance de inducción, promedio de evaluaciones, cumplimiento del cronograma, actividades atrasadas, nota por módulo, prácticas hechas, alertas por desvío y estado final (**Habilitado** / **En refuerzo**). |
+| **Inicio** | El puesto, el anillo de avance, el próximo paso y un mapa táctil de las áreas con las que se trabaja. Más las temperaturas de referencia y la ficha del proyecto. |
+| **Entrenar** | Las **8 estaciones** del proceso de stock. Cada una es un ejercicio distinto (ver abajo) con puntaje; se supera con 80 % y se puede repetir. |
+| **Turno** | El simulador: **8 decisiones** de un día real de trabajo. Cada opción mueve la merma, los quiebres y la exactitud del inventario en vivo. Al cierre sale el informe con los desvíos contra el estándar. |
+| **Tablero** | Los indicadores del puesto calculados con los turnos jugados: tarjetas con semáforo, medidores contra el objetivo, gráfico de tendencia, calculadoras de fórmula en vivo y la **certificación** final. |
 
-El avance (módulos leídos, notas, checklist, prácticas) se guarda **en el propio celular**, así que
-no se pierde al cerrar la app. En la pantalla *Avance* hay botones para reiniciar la fecha del plan
-o borrar todo el avance.
+### Las 8 estaciones
+
+| # | Estación | Qué se hace |
+|---|---|---|
+| 1 | Recepción | Cotejar 6 entregas contra el remito y decidir: recibir, observar o rechazar. |
+| 2 | Dónde va cada cosa | **Arrastrar** 9 insumos a congelado, refrigerado o depósito seco. |
+| 3 | PEPS en la estantería | **Reordenar** la estantería arrastrando, de lo que vence primero a lo último. |
+| 4 | Semáforo de vencimientos | Clasificar 6 productos: descartar, usar hoy o dejar. |
+| 5 | Cadena de frío | Mover el **termómetro** hasta el rango correcto de cada insumo. |
+| 6 | Cargar una merma | Completar la planilla con los cuatro datos que sirven: qué, cuánto, cuándo y por qué. |
+| 7 | Recuento de inventario | **Contar tocando** cada bulto, comparar con el sistema y decidir el ajuste. |
+| 8 | Punto de pedido | Mover los valores y ver en un gráfico si el stock aguanta la semana. |
+
+Todo el avance (puntajes, turnos y certificación) se guarda **en el propio celular**, así que no se
+pierde al cerrar la app. En *Inicio* hay un botón para borrarlo.
 
 ---
 
@@ -73,9 +87,9 @@ internet requieren que esté publicada.
 
 ## Cómo cambiar los textos (sin saber programar)
 
-**Todo el contenido está en un solo archivo: `contenido.js`.** Ahí están los módulos, las
-lecciones, las preguntas con sus respuestas correctas, la simulación de recepción, el ejercicio de
-PEPS, el checklist, las metas y los indicadores.
+**Todo el contenido está en un solo archivo: `contenido.js`.** Ahí están los ejercicios de las
+ocho estaciones, los eventos del turno con sus consecuencias, las preguntas de la certificación con
+sus respuestas correctas, las temperaturas y las metas.
 
 Reglas para no romper nada:
 
@@ -95,13 +109,19 @@ actualiza la app publicada.
 | Qué | Dónde en `contenido.js` |
 |---|---|
 | Nombres de los integrantes, docente, carrera | bloque `proyecto` |
-| Metas (días del plan, nota mínima) | bloque `metas` |
-| Temperaturas de referencia | bloque `referencias` |
-| Módulos, lecciones y evaluaciones | bloque `modulos` |
-| Entregas de la simulación | bloque `recepcion` |
+| Nota mínima para aprobar | bloque `metas` |
+| Temperaturas de cada zona | bloque `zonas` |
+| Nombre y presentación de cada estación | bloque `estaciones` |
+| Entregas de la simulación de recepción | bloque `recepcion` |
+| Insumos y su zona de guardado | bloque `zonasItems` |
 | Productos del ejercicio PEPS | bloque `peps` (`orden: 1` = el que se usa primero) |
-| Tareas del checklist | bloque `checklist` |
-| Preguntas de la evaluación final | bloque `evaluacionFinal` |
+| Productos del semáforo de vencimientos | bloque `vencimientos` |
+| Caso y campos de la planilla de merma | bloque `merma` |
+| Números del recuento de inventario | bloque `recuento` |
+| Consumo y entrega del punto de pedido | bloque `reposicion` |
+| Eventos del turno y su impacto | bloque `turno` |
+| Preguntas de la certificación | bloque `examen` |
+| Áreas del mapa de Inicio | bloque `mapa` |
 
 Si algo se rompe, en GitHub siempre se puede volver a la versión anterior desde el historial del
 archivo (**History**).
@@ -111,9 +131,13 @@ archivo (**History**).
 ## Qué archivo es cada cosa
 
 ```
-index.html            La app en sí (diseño y estructura de las pantallas)
-contenido.js          TODOS los textos y preguntas  ← es el archivo que editan ustedes
-app.js                La lógica (navegación, notas, avance, cálculos). Mejor no tocar.
+index.html            El esqueleto de la app (las pantallas se arman por JavaScript)
+estilos.css           Todo el diseño: colores, tipografías y componentes
+contenido.js          TODOS los textos y ejercicios  ← es el archivo que editan ustedes
+app.js                Estado, navegación, pantalla de Inicio e instalación como app
+estaciones.js         Los ocho ejercicios prácticos
+turno.js              El simulador de turno
+tablero.js            Indicadores, gráficos y certificación
 .github/workflows/    Publica el sitio solo cada vez que se sube un cambio
 manifest.webmanifest  Datos para que se pueda instalar como app en el celular
 sw.js                 Hace que funcione sin internet
@@ -121,21 +145,29 @@ iconos/               Ícono de la app (el de 180 px es el que usa el iPhone)
 ```
 
 > Si cambian archivos y en el celular siguen viendo la versión vieja: en `sw.js`, cambien
-> `const VERSION = 'induccion-v2';` por `'induccion-v3'` (y así), y suban el cambio. Eso fuerza la
+> `const VERSION = 'induccion-v3';` por `'induccion-v4'` (y así), y suban el cambio. Eso fuerza la
 > actualización.
 
 ---
 
 ## Cómo se conecta con la materia
 
-La app no es solo material de lectura: implementa el **ciclo de control de gestión** completo.
+La app no es material de lectura: implementa el **ciclo de control de gestión** completo y lo hace
+jugar a quien la usa.
 
-- **Estándar:** nota mínima 80 %, inducción completa en 15 días, cumplimiento de cronograma ≥ 90 %, 0 actividades atrasadas.
-- **Medición:** la app registra cada módulo leído, cada nota y cada práctica.
-- **Desvío:** compara automáticamente el resultado contra la meta (por ejemplo 65 % contra 80 % = −15 puntos).
-- **Acción correctiva:** genera alertas en la pantalla *Avance* (refuerzo + nueva evaluación) y solo
-  marca el estado como **Habilitado** cuando todos los indicadores están dentro del estándar.
+- **Estándar:** merma ≤ 2 %, 0 quiebres de stock, exactitud de inventario ≥ 98 %, 80 % para aprobar
+  cada estación y la certificación.
+- **Medición:** cada decisión del turno mueve los indicadores en vivo, y cada estación deja su puntaje.
+- **Desvío:** el tablero compara el resultado contra el objetivo con medidores y semáforo, y el
+  informe de cierre muestra exactamente qué decisión causó cada desvío.
+- **Acción correctiva:** el informe indica qué revisar, y la certificación solo marca **Habilitado**
+  cuando se alcanza el estándar; si no, queda **En refuerzo** con la indicación de qué repetir.
 
-Además, cada etapa del proceso de stock se presenta con su **punto de control**, su **registro** y su
-**indicador**, y las calculadoras permiten trabajar los cuatro KPIs del puesto: % de merma, rotación
-de inventario, quiebres de stock y diferencia de inventario.
+Los cuatro indicadores del puesto —% de merma, rotación de inventario, quiebres y diferencia de
+inventario— se practican con las calculadoras del tablero, donde se mueve cada variable de la
+fórmula y se ve el efecto al instante.
+
+El simulador de turno está calibrado para que un turno jugado perfecto caiga **justo en el
+estándar**: las pérdidas que igual ocurren (un producto que se quema, uno que vence) son el 2 % de
+las compras del día. Es decir que el estándar no es "cero pérdidas", es la pérdida inevitable bien
+gestionada.
