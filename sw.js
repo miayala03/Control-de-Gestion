@@ -1,16 +1,18 @@
 /* Service worker: permite usar la app sin internet una vez abierta.
    Si cambiás archivos y no ves los cambios en el celular, subí el número
-   de version (por ejemplo v4, v5...) y volvé a subir a GitHub.        */
-const VERSION = 'induccion-v3';
+   de version (por ejemplo v5, v6...) y volvé a subir a GitHub.        */
+const VERSION = 'induccion-v4';
 const ARCHIVOS = [
   './',
   './index.html',
   './estilos.css',
   './contenido.js',
   './app.js',
+  './nube.js',
   './estaciones.js',
   './turno.js',
   './tablero.js',
+  './admin.js',
   './manifest.webmanifest',
   './iconos/icono-180.png',
   './iconos/icono-192.png',
@@ -31,6 +33,8 @@ self.addEventListener('activate', e => {
 
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
+  // Las llamadas a la base de datos nunca se cachean: siempre van a la red.
+  if (e.request.url.includes('firestore.googleapis.com')) return;
   e.respondWith(
     fetch(e.request)
       .then(r => {

@@ -7,6 +7,8 @@ const CLAVE = 'induccion-stock-v2';
 
 const estadoInicial = () => ({
   inicio: hoyISO(),
+  nombre: '',       // lo pone la persona para que el supervisor la identifique
+  sync: null,       // { fecha, ok } de la última sincronización
   estaciones: {},   // id -> { mejor: 0..100, intentos: n }
   turnos: [],       // { fecha, puntaje, mermaPct, quiebres, exactitud }
   examen: null      // { nota, aprobado, fecha }
@@ -47,6 +49,7 @@ function anotarEstacion(id, puntaje) {
   const previo = E.estaciones[id] || { mejor: 0, intentos: 0 };
   E.estaciones[id] = { mejor: Math.max(previo.mejor, puntaje), intentos: previo.intentos + 1 };
   guardar();
+  sincronizar(true);   // en segundo plano; si falla, la app sigue igual
 }
 
 /* ---------------------------------------------------------------- */
@@ -97,12 +100,13 @@ const TITULOS = {
   estacion: ['Estación', 'Entrenamiento'],
   turno:    ['Simulador de turno', 'Tus decisiones, sus efectos'],
   tablero:  ['Tablero de control', 'Indicadores del puesto'],
-  examen:   ['Certificación', 'Evaluación final']
+  examen:   ['Certificación', 'Evaluación final'],
+  admin:    ['Panel de supervisión', 'Inducción del equipo']
 };
 
 // Qué pestaña de la barra inferior se ilumina en cada vista.
 const PESTANA = { inicio: 'inicio', entrenar: 'entrenar', estacion: 'entrenar',
-                  turno: 'turno', tablero: 'tablero', examen: 'tablero' };
+                  turno: 'turno', tablero: 'tablero', examen: 'tablero', admin: 'admin' };
 
 function ir(vista, param) {
   vistaActual = vista;
@@ -129,6 +133,7 @@ function ir(vista, param) {
   if (vista === 'turno')    renderTurno();
   if (vista === 'tablero')  renderTablero();
   if (vista === 'examen')   renderExamen();
+  if (vista === 'admin')    renderAdmin();
 
   window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
 }
@@ -205,6 +210,25 @@ function renderInicio() {
 
     <div class="sec">
       <div class="sec-head">
+        <div class="kicker">Tu ficha</div>
+        <h2>Tu nombre y tu avance</h2>
+      </div>
+      <div class="card">
+        <p class="sub" style="margin-top:0">Poné tu nombre para que el supervisor sepa de quién es este avance.</p>
+        <div class="campo">
+          <label>Nombre y apellido</label>
+          <input class="campo-texto" id="miNombre" value="${esc(E.nombre || '')}" placeholder="Ej.: Lucas González" maxlength="40">
+        </div>
+        <div id="estadoSync"></div>
+        <div class="btn-row">
+          <button class="btn sm" id="compartirAvance">Compartir mi avance</button>
+        </div>
+        <div id="fbCompartir"></div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head">
         <div class="kicker">Datos del proyecto</div>
         <h2>Ficha</h2>
       </div>
@@ -231,6 +255,10 @@ function renderInicio() {
       $('#mapaDetalle').innerHTML = `<b>${n.icono} ${esc(n.nombre)}</b> — ${esc(n.detalle)}`;
     };
   });
+
+  $('#miNombre').oninput = ev => { E.nombre = ev.target.value.trim(); guardar(); };
+  $('#compartirAvance').onclick = () => compartirAvance();
+  refrescarEstadoSync();
 
   $('#instalarApp').onclick = () => abrirInstalacion();
   $('#borrarTodo').onclick = () => {
@@ -449,10 +477,18 @@ function iniciarInstalacion() {
 /* Arranque (se ejecuta con todos los archivos ya cargados)          */
 /* ---------------------------------------------------------------- */
 document.addEventListener('DOMContentLoaded', () => {
+  aplicarEstandares();          // el supervisor puede haber cambiado las metas
+  actualizarPestanaSupervisor();
+
   $$('.nav button').forEach(b => b.onclick = () => ir(b.dataset.ir));
   $('#btnVolver').onclick = () => ir(vistaActual === 'examen' ? 'tablero' : 'entrenar');
+  $('#accesoSupervisor').onclick = () => ir('admin');
 
   ir('inicio');
+
+  // Si quedó algo sin sincronizar de la sesión anterior, se reintenta.
+  if (nubeActiva() && E.nombre && !(E.sync && E.sync.ok)) sincronizar(true);
+  if (modoSupervisor()) refrescarNube(false);
   iniciarInstalacion();
 
   if ('serviceWorker' in navigator) {

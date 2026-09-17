@@ -106,6 +106,51 @@ function graficoLinea(datos, op = {}) {
     </figure>`;
 }
 
+/* ---------------------------------------------------------------- */
+/* Gráfico de barras horizontales con línea de objetivo              */
+/* Una sola serie, así que tampoco lleva leyenda.                    */
+/* ---------------------------------------------------------------- */
+function graficoBarras(datos, op = {}) {
+  const ancho = 320, izq = 92, der = 30;
+  const alto = datos.length * 26 + 26;
+  const tope = op.maxX || 100;
+  const largo = v => (v / tope) * (ancho - izq - der);
+
+  const objetivo = op.objetivo != null
+    ? `<line x1="${(izq + largo(op.objetivo)).toFixed(1)}" y1="4"
+             x2="${(izq + largo(op.objetivo)).toFixed(1)}" y2="${alto - 18}"
+             stroke="#1A1410" stroke-width="1.5"></line>
+       <text x="${(izq + largo(op.objetivo)).toFixed(1)}" y="${alto - 6}" text-anchor="middle"
+             font-size="8" fill="${MUTE}">objetivo ${op.objetivo}${op.unidad || ''}</text>` : '';
+
+  // Barra de 14 px con punta redondeada y 2 px de aire entre vecinas.
+  const filas = datos.map((d, i) => {
+    const y = 8 + i * 26;
+    const w = Math.max(2, largo(d.y));
+    return `
+      <text x="${izq - 7}" y="${y + 11}" text-anchor="end" font-size="9" fill="#574838">${esc(d.x)}</text>
+      <rect x="${izq}" y="${y}" width="${(ancho - izq - der).toFixed(1)}" height="14" rx="4" fill="#F6EFE3"></rect>
+      <rect x="${izq}" y="${y}" width="${w.toFixed(1)}" height="14" rx="4" fill="${d.color || SERIE}"></rect>
+      <text x="${(izq + w + 6).toFixed(1)}" y="${y + 11}" font-size="9" font-weight="700" fill="#1A1410">${d.y}${op.unidad || ''}</text>`;
+  }).join('');
+
+  return `
+    <figure class="grafico">
+      <svg viewBox="0 0 ${ancho} ${alto}" role="img" aria-label="${esc(op.aria || 'Comparación por estación')}">
+        ${filas}
+        ${objetivo}
+      </svg>
+      ${op.pie ? `<figcaption>${esc(op.pie)}</figcaption>` : ''}
+      <details class="ver-datos">
+        <summary>Ver los datos</summary>
+        <table class="tabla-datos">
+          <tr><th>${esc(op.rotuloX || 'Estación')}</th><th>${esc(op.etiquetaY || 'Valor')}</th></tr>
+          ${datos.map(d => `<tr><td>${esc(d.x)}</td><td>${d.y}${op.unidad || ''}</td></tr>`).join('')}
+        </table>
+      </details>
+    </figure>`;
+}
+
 /* Globo de datos: se activa después de insertar el gráfico en la página. */
 function activarGraficos() {
   $$('figure.grafico:not([data-activo])').forEach(fig => {
@@ -327,6 +372,7 @@ function renderExamen() {
     const previa = E.examen ? E.examen.nota : 0;
     E.examen = { nota: Math.max(nota, previa), aprobado: aprobado || (E.examen && E.examen.aprobado) || false, fecha: hoyISO() };
     guardar();
+    sincronizar(true);
     vibrar(aprobado ? [18, 60, 18] : 30);
 
     $('#v-examen').innerHTML = `

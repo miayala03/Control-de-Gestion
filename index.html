@@ -44,11 +44,13 @@
   <section class="vista" id="v-turno"></section>
   <section class="vista" id="v-tablero"></section>
   <section class="vista" id="v-examen"></section>
+  <section class="vista" id="v-admin"></section>
 
   <footer>
     <p><b>Simulador de inducción</b> — Encargado de Stock de Cocina.<br>
     Proyecto final · Control de Gestión · Ing. en Sistemas de Producción.</p>
     <p class="aviso" id="avisoLegal"></p>
+    <p><button class="link-sup" id="accesoSupervisor">Acceso supervisor</button></p>
   </footer>
 </main>
 
@@ -58,6 +60,7 @@
     <button data-ir="entrenar"><span class="ni">🎯</span>Entrenar</button>
     <button data-ir="turno"><span class="ni">⏱️</span>Turno</button>
     <button data-ir="tablero"><span class="ni">📊</span>Tablero</button>
+    <button data-ir="admin" class="oculta"><span class="ni">🗂️</span>Equipo</button>
   </div>
 </nav>
 
@@ -88,8 +91,10 @@
 
 <script src="contenido.js"></script>
 <script src="app.js"></script>
+<script src="nube.js"></script>
 <script src="estaciones.js"></script>
 <script src="turno.js"></script>
 <script src="tablero.js"></script>
+<script src="admin.js"></script>
 </body>
 </html>

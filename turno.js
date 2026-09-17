@@ -135,6 +135,7 @@ function cerrarTurno() {
   E.turnos.push({ fecha: hoyISO(), puntaje, mermaPct, quiebres: s.quiebres, exactitud, merma: s.merma });
   if (E.turnos.length > 20) E.turnos = E.turnos.slice(-20);   // historial acotado
   guardar();
+  sincronizar(true);
 
   const bien = puntaje >= CONTENIDO.metas.notaMinima;
   const flojas = s.decisiones.filter(d => d.puntos < 8);

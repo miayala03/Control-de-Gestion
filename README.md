@@ -39,6 +39,62 @@ pierde al cerrar la app. En *Inicio* hay un botón para borrarlo.
 
 ---
 
+## Las dos perspectivas: persona y supervisor
+
+La app tiene dos modos de uso. El de la **persona en inducción** es el que se ve al entrar. El del
+**supervisor** está detrás de un PIN: el enlace *Acceso supervisor* está al pie de cualquier
+pantalla, y el PIN se cambia en el bloque `supervisor` de `contenido.js` (viene `2468`).
+
+> **Esto no es seguridad de verdad.** Como la app es un sitio estático sin servidor, el PIN viaja
+> dentro del código y quien sepa mirar lo encuentra. Sirve para separar dos modos de uso, no para
+> proteger datos. No cargues información sensible.
+
+Con el PIN puesto aparece una quinta pestaña, **Equipo**, y la barra de arriba se pone oscura para
+que no haya dudas de en qué modo estás. El panel muestra:
+
+- **Resumen del equipo:** cuántas personas hay, qué porcentaje está habilitado, avance medio y
+  turnos simulados, cada uno con su semáforo.
+- **Dónde falla la inducción:** un gráfico con el porcentaje del equipo que superó cada estación,
+  contra el objetivo. Si una estación está baja para todos, el problema no es de una persona: es del
+  programa. El panel señala la más floja como acción correctiva.
+- **Persona por persona:** el avance de cada una, y tocando su nombre, el detalle estación por
+  estación, su último turno y su certificación.
+- **Estándar:** el supervisor cambia la nota mínima y los objetivos de merma, quiebres y exactitud.
+  La app pasa a medir contra esos valores.
+- **Planilla (CSV):** descarga la tabla completa para el informe, lista para abrir en Excel.
+
+### Cómo llegan los datos al supervisor
+
+El avance de cada persona vive en *su* teléfono, así que hay que llevarlo hasta el panel. Hay dos
+formas, y la app usa la que esté disponible:
+
+**Sin configurar nada (funciona ya).** La persona pone su nombre en *Inicio* y toca *Compartir mi
+avance*: la app arma un código (`IND1....`) que se manda por mensaje. El supervisor lo pega en su
+panel y la persona aparece en la lista.
+
+**Con Firebase (sincroniza sola).** Cada persona sincroniza automáticamente cada vez que supera una
+estación, cierra un turno o rinde, y el supervisor ve al equipo desde su propio teléfono. Los pasos
+están dentro del panel, en *Conexión*, y son:
+
+1. Crear un proyecto en `console.firebase.google.com` (gratis, sin tarjeta).
+2. En *Compilación → Firestore Database*, crear la base. **Dejar la que viene por defecto:** las
+   bases con nombre propio no tienen cuota gratuita.
+3. Empezar en *modo de prueba* y, en *Reglas*, permitir lectura y escritura.
+4. En *Configuración del proyecto*, agregar una app web y copiar `apiKey` y `projectId`.
+5. Pegarlos en el bloque `firebase` de `contenido.js` y subir el cambio.
+
+> La `apiKey` de Firebase **es pública por diseño**: viaja dentro de la página y cualquiera puede
+> verla. No es una contraseña. Con las reglas en modo de prueba, quien tenga el enlace puede leer y
+> escribir en la base.
+
+Sobre el costo: la cuota gratuita de Firestore es **por día** (50.000 lecturas, 20.000 escrituras,
+1 GiB guardado) y se reinicia. Un grupo de clase usa una fracción mínima: 5 personas sincronizando
+50 veces cada una son 250 escrituras **en total**, contra 20.000 por día. Y sin facturación
+habilitada no hay forma de que te cobren: al llegar al tope la base deja de responder hasta el día
+siguiente.
+
+---
+
 ## Dónde está publicada
 
 La app ya está publicada con GitHub Pages en:
@@ -122,6 +178,8 @@ actualiza la app publicada.
 | Eventos del turno y su impacto | bloque `turno` |
 | Preguntas de la certificación | bloque `examen` |
 | Áreas del mapa de Inicio | bloque `mapa` |
+| PIN del supervisor | bloque `supervisor` |
+| Conexión a Firebase | bloque `firebase` |
 
 Si algo se rompe, en GitHub siempre se puede volver a la versión anterior desde el historial del
 archivo (**History**).
@@ -135,6 +193,8 @@ index.html            El esqueleto de la app (las pantallas se arman por JavaScr
 estilos.css           Todo el diseño: colores, tipografías y componentes
 contenido.js          TODOS los textos y ejercicios  ← es el archivo que editan ustedes
 app.js                Estado, navegación, pantalla de Inicio e instalación como app
+nube.js               Sincronización con Firebase y códigos de avance
+admin.js              El panel del supervisor (PIN, seguimiento, estándares, CSV)
 estaciones.js         Los ocho ejercicios prácticos
 turno.js              El simulador de turno
 tablero.js            Indicadores, gráficos y certificación
@@ -145,7 +205,7 @@ iconos/               Ícono de la app (el de 180 px es el que usa el iPhone)
 ```
 
 > Si cambian archivos y en el celular siguen viendo la versión vieja: en `sw.js`, cambien
-> `const VERSION = 'induccion-v3';` por `'induccion-v4'` (y así), y suban el cambio. Eso fuerza la
+> `const VERSION = 'induccion-v4';` por `'induccion-v5'` (y así), y suban el cambio. Eso fuerza la
 > actualización.
 
 ---

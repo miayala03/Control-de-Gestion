@@ -29,6 +29,41 @@ const CONTENIDO = {
   },
 
   /* ------------------------------------------------------------------ */
+  /* Acceso del supervisor                                               */
+  /*                                                                     */
+  /* OJO: esto NO es seguridad de verdad. Como la app es un sitio        */
+  /* estático sin servidor, el PIN viaja dentro del código y cualquiera  */
+  /* que sepa mirar puede encontrarlo. Sirve para separar dos modos de   */
+  /* uso, no para proteger datos. Cambiá el PIN acá.                     */
+  /* ------------------------------------------------------------------ */
+  supervisor: {
+    pin: '2468',
+    titulo: 'Acceso supervisor',
+    ayuda: 'Panel de seguimiento de la inducción del equipo.'
+  },
+
+  /* ------------------------------------------------------------------ */
+  /* Base de datos del equipo (Firebase Firestore) — OPCIONAL            */
+  /*                                                                     */
+  /* Vacío, la app funciona igual: cada persona genera un código de       */
+  /* avance y el supervisor lo pega en su panel.                          */
+  /*                                                                     */
+  /* Con estos dos datos cargados, cada persona sincroniza sola y el      */
+  /* supervisor ve al equipo desde su propio teléfono. Cómo obtenerlos    */
+  /* está explicado paso a paso dentro del panel, en "Conexión".          */
+  /*                                                                     */
+  /* La apiKey de Firebase es pública por diseño (viaja en la página).    */
+  /* No es una contraseña: quien tenga el enlace puede leer y escribir,   */
+  /* así que no cargues datos sensibles.                                  */
+  /* ------------------------------------------------------------------ */
+  firebase: {
+    apiKey: '',
+    projectId: '',
+    coleccion: 'personas',
+    equipo: 'local-centro'     // permite separar grupos dentro de la misma base
+  },
+
+  /* ------------------------------------------------------------------ */
   /* Rangos de temperatura: se usan en varios ejercicios                 */
   /* ------------------------------------------------------------------ */
   zonas: [
@@ -47,6 +82,7 @@ const CONTENIDO = {
     {
       id: 'recepcion', numero: 1, tipo: 'recepcion',
       nombre: 'Recepción', icono: '🚚',
+      corto: 'Recepción',
       lema: 'Llegó el camión. Nada entra sin control.',
       briefing: [
         'Cotejá contra el remito: cantidad, estado, temperatura y vencimiento.',
@@ -58,6 +94,7 @@ const CONTENIDO = {
     {
       id: 'zonas', numero: 2, tipo: 'zonas',
       nombre: 'Dónde va cada cosa', icono: '🏬',
+      corto: 'Zonas',
       lema: 'Cada insumo tiene su temperatura.',
       briefing: [
         'Congelado −18 °C · Refrigerado 0 a 4 °C · Seco 15 a 22 °C.',
@@ -69,6 +106,7 @@ const CONTENIDO = {
     {
       id: 'peps', numero: 3, tipo: 'peps',
       nombre: 'PEPS en la estantería', icono: '🔄',
+      corto: 'PEPS',
       lema: 'Primero entra, primero sale.',
       briefing: [
         'Lo que vence antes va adelante; lo nuevo, atrás.',
@@ -79,6 +117,7 @@ const CONTENIDO = {
     {
       id: 'vencimientos', numero: 4, tipo: 'vencimientos',
       nombre: 'Semáforo de vencimientos', icono: '📅',
+      corto: 'Vencimientos',
       lema: 'Revisión diaria del depósito.',
       briefing: [
         'Vencido: se retira y se registra como merma.',
@@ -90,6 +129,7 @@ const CONTENIDO = {
     {
       id: 'frio', numero: 5, tipo: 'frio',
       nombre: 'Cadena de frío', icono: '🌡️',
+      corto: 'Cadena de frío',
       lema: 'Llevá cada producto a su temperatura.',
       briefing: [
         'Movés el termómetro hasta el rango correcto de cada insumo.',
@@ -100,6 +140,7 @@ const CONTENIDO = {
     {
       id: 'merma', numero: 6, tipo: 'merma',
       nombre: 'Cargar una merma', icono: '📝',
+      corto: 'Merma',
       lema: 'Si no está registrado, no existe.',
       briefing: [
         'Todo movimiento necesita cuatro datos: qué, cuánto, cuándo y por qué.',
@@ -110,6 +151,7 @@ const CONTENIDO = {
     {
       id: 'recuento', numero: 7, tipo: 'recuento',
       nombre: 'Recuento de inventario', icono: '🔢',
+      corto: 'Recuento',
       lema: 'Contá el stock real y comparalo con el sistema.',
       briefing: [
         'Tocá cada bulto para contarlo: el conteo es físico, no estimado.',
@@ -121,6 +163,7 @@ const CONTENIDO = {
     {
       id: 'reposicion', numero: 8, tipo: 'reposicion',
       nombre: 'Punto de pedido', icono: '📈',
+      corto: 'Punto de pedido',
       lema: 'Reponer antes del quiebre, no después.',
       briefing: [
         'Punto de pedido = consumo diario × días de entrega + stock de seguridad.',

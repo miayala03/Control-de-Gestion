@@ -470,6 +470,52 @@ details.ver-datos[open] summary::before{transform:rotate(90deg)}
 .sello.alerta{background:var(--alerta-suave);color:#7A5600}
 
 /* ---------------------------------------------------------------- */
+/* Supervisor                                                        */
+/* ---------------------------------------------------------------- */
+.nav button.oculta{display:none}
+body.es-supervisor .topbar{background:rgba(26,20,16,.94);border-bottom-color:#3A2E24}
+body.es-supervisor .tb-txt strong{color:#fff}
+body.es-supervisor .tb-txt small{color:var(--amarillo)}
+body.es-supervisor .icon-btn{background:#2A211A;border-color:#3A2E24;color:#fff}
+
+.link-sup{
+  background:none;border:none;color:var(--ink-3);font-size:.75rem;cursor:pointer;
+  text-decoration:underline;text-underline-offset:3px;padding:6px 0;margin-top:4px;
+}
+.link-sup:active{color:var(--rojo)}
+
+.barra-sup{display:flex;align-items:flex-start;gap:12px}
+.barra-sup > div{flex:1;min-width:0}
+.fila-estado{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-top:10px}
+.fila-estado .estado-pin{margin-top:0}
+.fila-estado .btn{margin-left:auto}
+
+/* teclado de PIN */
+.pin-puntos{display:flex;gap:11px;justify-content:center;margin:16px 0 14px}
+.pin-puntos span{
+  width:13px;height:13px;border-radius:50%;background:var(--surface-3);
+  border:1.5px solid var(--line-2);transition:background .15s,transform .15s;
+}
+.pin-puntos span.lleno{background:var(--rojo);border-color:var(--rojo);transform:scale(1.12)}
+.teclado{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:6px}
+.teclado button{
+  background:var(--surface);border:1.5px solid var(--line);border-radius:13px;
+  padding:15px 0;font-size:1.25rem;font-weight:700;cursor:pointer;font-family:var(--mono);
+  transition:transform .1s,background .15s;
+}
+.teclado button:active{transform:scale(.95);background:var(--surface-2)}
+.teclado button.aux{font-family:var(--sans);font-size:1.05rem;color:var(--ink-3)}
+.teclado button.ok{background:var(--ink);border-color:var(--ink);color:#fff}
+
+/* campos de texto */
+.campo-texto{
+  width:100%;background:var(--surface);border:1.5px solid var(--line);border-radius:11px;
+  padding:11px 13px;font-size:.88rem;resize:vertical;line-height:1.5;
+}
+.campo-texto:focus{outline:none;border-color:var(--rojo)}
+textarea.campo-texto{font-family:var(--mono);font-size:.76rem;word-break:break-all}
+
+/* ---------------------------------------------------------------- */
 /* Instalar como app                                                 */
 /* ---------------------------------------------------------------- */
 .inst-banner{
