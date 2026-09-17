@@ -25,20 +25,17 @@ o borrar todo el avance.
 
 ---
 
-## Cómo verla en el celular (3 pasos, sin instalar nada)
+## Dónde está publicada
 
-La forma más fácil es publicarla con **GitHub Pages**:
-
-1. En GitHub, entrá a este repositorio → pestaña **Settings** (arriba).
-2. En el menú de la izquierda, **Pages**.
-3. En *Source* elegí **Deploy from a branch**; en *Branch* elegí la rama (`main` o
-   `claude/happy-faraday-vcm59y`), carpeta `/ (root)`, y apretá **Save**.
-
-Esperá 1 o 2 minutos y GitHub te muestra la dirección, que va a ser algo así:
+La app ya está publicada con GitHub Pages en:
 
 ```
 https://miayala03.github.io/Control-de-Gestion/
 ```
+
+**No hay que publicarla a mano cada vez.** Cada cambio que se sube a la rama principal
+(`claude/happy-faraday-vcm59y`) se publica solo: lo hace el flujo `.github/workflows/pages.yml`.
+Tarda 1 o 2 minutos. El estado de cada publicación se ve en la pestaña **Actions** del repositorio.
 
 Abrí esa dirección en el celular. La app te muestra sola un cartel abajo para instalarla
 (y siempre podés volver a verlo en **Avance → Instalar como app**).
@@ -117,6 +114,7 @@ archivo (**History**).
 index.html            La app en sí (diseño y estructura de las pantallas)
 contenido.js          TODOS los textos y preguntas  ← es el archivo que editan ustedes
 app.js                La lógica (navegación, notas, avance, cálculos). Mejor no tocar.
+.github/workflows/    Publica el sitio solo cada vez que se sube un cambio
 manifest.webmanifest  Datos para que se pueda instalar como app en el celular
 sw.js                 Hace que funcione sin internet
 iconos/               Ícono de la app (el de 180 px es el que usa el iPhone)
