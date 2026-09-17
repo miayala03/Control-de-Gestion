@@ -1,0 +1,50 @@
+# Publica la inducción en GitHub Pages.
+#
+# Cada vez que se sube un cambio a la rama principal, este flujo toma los
+# archivos del repositorio tal como están y los publica en:
+#   https://miayala03.github.io/Control-de-Gestion/
+#
+# La primera ejecución además activa GitHub Pages sola (enablement: true),
+# así no hace falta tocar nada en la configuración del repositorio.
+
+name: Publicar en GitHub Pages
+
+on:
+  push:
+    branches: ["claude/happy-faraday-vcm59y"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Si se suben dos cambios seguidos, se publica el último sin cancelar
+# una publicación que ya esté en curso.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.despliegue.outputs.page_url }}
+    steps:
+      - name: Traer los archivos
+        uses: actions/checkout@v4
+
+      - name: Preparar (y activar si hace falta) GitHub Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Empaquetar el sitio
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "."
+
+      - name: Publicar
+        id: despliegue
+        uses: actions/deploy-pages@v4
