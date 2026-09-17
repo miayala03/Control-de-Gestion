@@ -50,6 +50,9 @@ function modoSupervisor() { return SUP.sesion === true; }
 function renderAdmin() {
   if (!modoSupervisor()) { renderPorton(); return; }
   renderPanel();
+  // Primera entrada al panel: se lee la base sola, sin tener que apretar
+  // "Actualizar". Mientras tanto la barra de estado dice que está leyendo.
+  if (nubeActiva() && personasNube === null) refrescarNube(true);
 }
 
 function renderPorton() {
@@ -86,7 +89,7 @@ function renderPorton() {
     if (tecleado === String(s.pin)) {
       SUP.sesion = true; guardarSup(); vibrar([18, 60, 18]);
       actualizarPestanaSupervisor();
-      renderPanel();
+      renderAdmin();
     } else {
       vibrar(60);
       $('#pinError').innerHTML = `<div class="feedback mal"><span class="ic">⚠️</span><span>PIN incorrecto.</span></div>`;
@@ -154,11 +157,13 @@ function renderPanel() {
   const t = CONTENIDO.turno;
   const conexion = nubeActiva();
 
-  const filaEstado = conexion
-    ? (estadoNube && estadoNube.ok
+  const filaEstado = !conexion
+    ? `<span class="estado-pin alerta">! Modo local: sin base de datos configurada</span>`
+    : !estadoNube
+      ? `<span class="estado-pin alerta">· Leyendo la base…</span>`
+      : estadoNube.ok
         ? `<span class="estado-pin bien">✓ Conectado a la nube</span>`
-        : `<span class="estado-pin critico">⚠ No se pudo leer la nube${estadoNube ? ' (' + esc(estadoNube.motivo) + ')' : ''}</span>`)
-    : `<span class="estado-pin alerta">! Modo local: sin base de datos configurada</span>`;
+        : `<span class="estado-pin critico">⚠ No se pudo leer la nube (${esc(estadoNube.motivo)})</span>`;
 
   $('#v-admin').innerHTML = `
     <div class="barra-sup">
