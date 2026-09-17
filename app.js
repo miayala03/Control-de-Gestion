@@ -106,7 +106,15 @@ const PESTANA = { inicio: 'inicio', entrenar: 'entrenar', estacion: 'entrenar',
 
 function ir(vista, param) {
   vistaActual = vista;
-  $$('.vista').forEach(v => v.classList.remove('activa'));
+
+  // Se vacía todo lo que no es la vista activa. Varias pantallas usan los
+  // mismos id internos (#fb, #sigue, #ejercicio); si quedaran dos en el
+  // documento, querySelector tomaría el de la pantalla oculta y la vista
+  // visible dejaría de responder. Cada vista se vuelve a armar al entrar.
+  $$('.vista').forEach(v => {
+    v.classList.remove('activa');
+    if (v.id !== 'v-' + vista) v.innerHTML = '';
+  });
   $('#v-' + vista).classList.add('activa');
   $$('.nav button').forEach(b => b.classList.toggle('on', b.dataset.ir === PESTANA[vista]));
   $('#btnVolver').classList.toggle('show', vista === 'estacion' || vista === 'examen');
