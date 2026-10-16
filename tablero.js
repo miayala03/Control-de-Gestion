@@ -158,6 +158,7 @@ function activarGraficos() {
     const tip = fig.querySelector('.tip');
     const cruz = fig.querySelector('.cruz');
     const svg = fig.querySelector('svg');
+    if (!tip || !cruz) return;   // el gráfico de barras no tiene globo
 
     const mostrar = hit => {
       const caja = fig.querySelector('div').getBoundingClientRect();

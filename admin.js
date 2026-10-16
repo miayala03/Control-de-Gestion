@@ -1,9 +1,9 @@
 /* ============================================================================
    SUPERVISOR — panel de seguimiento de la inducción del equipo.
 
-   Se entra con un PIN (definido en contenido.js). Importante: como la app es
-   un sitio estático, ese PIN viaja en el código y NO es seguridad real.
-   Separa dos modos de uso, no protege datos.
+   Se entra con una cuenta de rol 'admin' (definidas en contenido.js).
+   Importante: como la app es un sitio estático, las contraseñas viajan en el
+   código y NO es seguridad real. Separa dos modos de uso, no protege datos.
 
    Los datos de las personas llegan de dos formas:
      · con Firebase configurado, cada persona sincroniza y el panel los lee;
@@ -13,7 +13,6 @@
 const CLAVE_SUP = 'induccion-supervisor-v1';
 
 const supInicial = () => ({
-  sesion: false,
   cargadas: [],      // fichas pegadas a mano (modo local)
   estandares: null   // { notaMinima, merma, quiebres, exactitud }
 });
@@ -42,93 +41,64 @@ function aplicarEstandares() {
   if (e.exactitud != null) t.exactitud = e.exactitud;
 }
 
-function modoSupervisor() { return SUP.sesion === true; }
+function modoSupervisor() { return esAdmin(); }
 
 /* ---------------------------------------------------------------- */
-/* Entrada: teclado de PIN                                           */
+/* Entrada: solo con una cuenta de rol 'admin' (ver sesion.js)       */
 /* ---------------------------------------------------------------- */
 function renderAdmin() {
-  if (!modoSupervisor()) { renderPorton(); return; }
+  if (!modoSupervisor()) {
+    $('#v-admin').innerHTML = `
+      <div class="brief">
+        <div class="e">🔐</div>
+        <h2>Panel de supervisión</h2>
+        <div class="lema">Solo para cuentas de supervisor.</div>
+        <div class="ind">Si sos la persona en inducción, volvé a <b>Inicio</b>: este panel no es para vos.</div>
+      </div>`;
+    return;
+  }
   renderPanel();
   // Primera entrada al panel: se lee la base sola, sin tener que apretar
   // "Actualizar". Mientras tanto la barra de estado dice que está leyendo.
   if (nubeActiva() && personasNube === null) refrescarNube(true);
 }
 
-function renderPorton() {
-  let tecleado = '';
-  const s = CONTENIDO.supervisor;
-
-  $('#v-admin').innerHTML = `
-    <div class="brief">
-      <div class="e">🔐</div>
-      <h2>${esc(s.titulo)}</h2>
-      <div class="lema">${esc(s.ayuda)}</div>
-      <div class="ind">Si sos la persona en inducción, volvé a <b>Inicio</b>: este panel no es para vos.</div>
-    </div>
-
-    <div class="card" style="margin-top:14px">
-      <p class="sub" style="margin-top:0;text-align:center">Ingresá el PIN de supervisor</p>
-      <div class="pin-puntos" id="pinPuntos"></div>
-      <div id="pinError"></div>
-      <div class="teclado">
-        ${[1,2,3,4,5,6,7,8,9].map(n => `<button data-t="${n}">${n}</button>`).join('')}
-        <button data-t="borrar" class="aux">←</button>
-        <button data-t="0">0</button>
-        <button data-t="ok" class="aux ok">✓</button>
-      </div>
-    </div>`;
-
-  // Tantos círculos como dígitos tenga el PIN configurado, no un número fijo.
-  const largoPin = String(s.pin).length;
-  const pintarPuntos = () => {
-    $('#pinPuntos').innerHTML = Array.from({ length: Math.max(largoPin, tecleado.length) },
-      (_, i) => `<span class="${i < tecleado.length ? 'lleno' : ''}"></span>`).join('');
-  };
-  pintarPuntos();
-
-  const probar = () => {
-    if (tecleado === String(s.pin)) {
-      SUP.sesion = true; guardarSup(); vibrar([18, 60, 18]);
-      actualizarPestanaSupervisor();
-      renderAdmin();
-    } else {
-      vibrar(60);
-      $('#pinError').innerHTML = `<div class="feedback mal"><span class="ic">⚠️</span><span>PIN incorrecto.</span></div>`;
-      tecleado = ''; pintarPuntos();
-    }
-  };
-
-  $$('#v-admin .teclado button').forEach(b => {
-    b.onclick = () => {
-      const t = b.dataset.t;
-      if (t === 'borrar') tecleado = tecleado.slice(0, -1);
-      else if (t === 'ok') return probar();
-      else if (tecleado.length < 8) tecleado += t;
-      vibrar(6);
-      pintarPuntos();
-      $('#pinError').innerHTML = '';
-      if (tecleado.length === String(s.pin).length) probar();
-    };
-  });
-}
-
 /* ---------------------------------------------------------------- */
 /* Quiénes están en el equipo                                        */
 /* ---------------------------------------------------------------- */
+/* A qué cuenta corresponde una ficha: por su usuario o, en las fichas
+   viejas que no lo traen, por el nombre. Sirve para no listar dos veces
+   a la misma persona. */
+function clavePersona(p) {
+  const nombre = String(p.nombre || '').toLowerCase();
+  const cuenta = buscarCuenta(p.usuario) ||
+    (CONTENIDO.usuarios || []).find(c => c.nombre.toLowerCase() === nombre);
+  return cuenta ? 'u:' + cuenta.usuario.toLowerCase() : 'n:' + nombre;
+}
+
 function personasVisibles() {
-  const deNube = (personasNube || []).map(p => ({
+  const vistas = new Set();
+  const primeraVez = p => { const k = clavePersona(p); if (vistas.has(k)) return false; vistas.add(k); return true; };
+
+  // La nube ya viene ordenada de la más reciente a la más vieja: si una
+  // persona tiene dos fichas, queda la última.
+  const deNube = (personasNube || []).filter(primeraVez).map(p => ({
     id: p.id, nombre: p.nombre, avance: p.avance, certificado: p.certificado,
     actualizado: p.actualizado, datos: p.datos || {}, origen: 'nube'
   }));
   // Las pegadas a mano solo se muestran si esa persona no llegó por la nube.
-  const nombres = new Set(deNube.map(p => p.nombre.toLowerCase()));
-  const aMano = (SUP.cargadas || [])
-    .filter(p => !nombres.has(String(p.nombre).toLowerCase()))
+  const aMano = (SUP.cargadas || []).filter(primeraVez)
     .map((p, i) => ({ id: 'local-' + i, nombre: p.nombre, avance: p.avance,
                       certificado: p.certificado, actualizado: p.actualizado,
                       datos: p.datos || {}, origen: 'codigo' }));
-  return deNube.concat(aMano);
+  // El resto de los trabajadores con cuenta: figuran aunque todavía no
+  // hayan ingresado, así el equipo se ve completo.
+  const sinIngresar = (CONTENIDO.usuarios || [])
+    .filter(c => c.rol === 'trabajador')
+    .map(c => ({ id: 'cuenta-' + c.usuario, nombre: c.nombre, usuario: c.usuario }))
+    .filter(primeraVez)
+    .map(p => Object.assign(p, { avance: 0, certificado: false, actualizado: '', datos: {}, origen: 'cuenta' }));
+  return deNube.concat(aMano, sinIngresar);
 }
 
 function resumenEquipo(personas) {
@@ -173,7 +143,7 @@ function renderPanel() {
         <div class="kicker">Panel de supervisión</div>
         <h2 style="font-size:1.2rem;margin-top:3px">Inducción del equipo</h2>
       </div>
-      <button class="btn sm ghost" id="salirSup">Salir</button>
+      <button class="btn sm ghost" id="salirSup">Cerrar sesión</button>
     </div>
     <div class="fila-estado">${filaEstado}
       <button class="btn sm ghost" id="refrescar">Actualizar</button>
@@ -214,15 +184,16 @@ function renderPanel() {
           ${personas.map((p, i) => {
             const d = p.datos || {};
             const estado = p.certificado ? ['lista', '✅', 'Habilitado']
+                        : p.origen === 'cuenta' ? ['', '👤', 'Sin ingresar']
                         : (p.avance >= 50 ? ['', '🔁', 'En curso'] : ['', '○', 'Inicial']);
             return `
             <button class="est ${estado[0]}" data-persona="${i}">
               <span class="num">${estado[1]}</span>
               <span class="tx">
                 <strong>${esc(p.nombre)}</strong>
-                <small>${d.superadas || 0}/${CONTENIDO.estaciones.length} estaciones ·
+                <small>${p.origen === 'cuenta' ? 'Todavía no ingresó a la app' : `${d.superadas || 0}/${CONTENIDO.estaciones.length} estaciones ·
                        ${d.examen && d.examen.nota ? 'certificación ' + d.examen.nota + ' %' : 'sin certificar'}
-                       ${p.origen === 'codigo' ? ' · por código' : ''}</small>
+                       ${p.origen === 'codigo' ? ' · por código' : ''}`}</small>
               </span>
               <span class="estado"><span class="puntaje">${p.avance}%</span></span>
             </button>`;
@@ -233,7 +204,7 @@ function renderPanel() {
       <div class="card" style="margin-top:14px">
         <h3>Todavía no hay nadie cargado</h3>
         <p class="sub">${conexion
-          ? 'La base está conectada, pero ninguna persona sincronizó su avance todavía. Cada una tiene que poner su nombre en Inicio y tocar “Compartir mi avance”.'
+          ? 'La base está conectada, pero ninguna persona sincronizó su avance todavía. El avance llega solo cuando cada una ingresa con su usuario.'
           : 'Sin base de datos configurada, pedile a cada persona su código de avance y pegalo abajo. O configurá Firebase para que sincronicen solas.'}</p>
       </div>`}
 
@@ -261,11 +232,7 @@ function renderPanel() {
       <div class="card" id="cardNube"></div>
     </div>`;
 
-  $('#salirSup').onclick = () => {
-    SUP.sesion = false; guardarSup();
-    actualizarPestanaSupervisor();
-    ir('inicio');
-  };
+  $('#salirSup').onclick = () => cerrarSesion();
   $('#refrescar').onclick = () => refrescarNube(true);
 
   $$('#v-admin [data-persona]').forEach(b =>
@@ -303,7 +270,8 @@ function verPersona(p) {
 
   mostrarPanel({
     titulo: p.nombre,
-    sub: `${p.avance} % del programa · ${p.certificado ? 'habilitado' : 'en curso'}` +
+    sub: p.origen === 'cuenta' ? 'Tiene cuenta, pero todavía no ingresó a la app.' :
+         `${p.avance} % del programa · ${p.certificado ? 'habilitado' : 'en curso'}` +
          (p.actualizado ? ` · actualizado ${p.actualizado.slice(0, 10)}` : ''),
     nota: `
       <div style="font-size:.8rem">

@@ -10,7 +10,6 @@
 ============================================================================ */
 
 const CLAVE_NUBE = 'induccion-nube-config';
-const CLAVE_ID = 'induccion-mi-id';
 
 /* La configuración puede venir de contenido.js (para todo el equipo) o de
    este dispositivo (para probar antes de subirla al repositorio). */
@@ -43,6 +42,7 @@ function aCampos(p) {
   return {
     fields: {
       nombre:      { stringValue: String(p.nombre || '') },
+      usuario:     { stringValue: String(p.usuario || '') },
       equipo:      { stringValue: String(p.equipo || '') },
       avance:      { integerValue: String(Math.round(p.avance || 0)) },
       certificado: { booleanValue: !!p.certificado },
@@ -60,6 +60,7 @@ function desdeCampos(doc) {
   return {
     id: (doc.name || '').split('/').pop(),
     nombre: leer('nombre', 'stringValue') || 'Sin nombre',
+    usuario: leer('usuario', 'stringValue') || '',
     equipo: leer('equipo', 'stringValue') || '',
     avance: +(leer('avance', 'integerValue') || 0),
     certificado: !!leer('certificado', 'booleanValue'),
@@ -68,18 +69,10 @@ function desdeCampos(doc) {
   };
 }
 
-/* Identificador estable de esta persona en este dispositivo: así cada
-   sincronización pisa su propio documento en vez de crear uno nuevo. */
-function miIdNube(nombre) {
-  let id = null;
-  try { id = localStorage.getItem(CLAVE_ID); } catch (e) {}
-  if (id) return id;
-  const base = String(nombre || 'persona').toLowerCase()
-    .normalize('NFD').replace(/[̀-ͯ]/g, '')
-    .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 24) || 'persona';
-  id = base + '-' + Math.random().toString(36).slice(2, 7);
-  try { localStorage.setItem(CLAVE_ID, id); } catch (e) {}
-  return id;
+/* Identificador estable de la cuenta: así cada sincronización pisa su
+   propio documento, desde el teléfono que sea, en vez de crear uno nuevo. */
+function miIdNube() {
+  return 'u-' + SESION.usuario.toLowerCase().replace(/[^a-z0-9_-]+/g, '-');
 }
 
 /* ---------------------------------------------------------------- */
@@ -91,7 +84,7 @@ async function nubeGuardar(persona) {
   const c = configNube();
   if (!c) return { ok: false, motivo: 'sin-config' };
   const coleccion = c.coleccion || 'personas';
-  const id = miIdNube(persona.nombre);
+  const id = miIdNube();
   try {
     const r = await fetch(urlFirestore(`${coleccion}/${id}`, c), {
       method: 'PATCH',
@@ -142,6 +135,7 @@ function miFicha() {
   const ultimo = E.turnos[E.turnos.length - 1] || null;
   return {
     nombre: E.nombre || '',
+    usuario: SESION ? SESION.usuario : '',
     equipo: (CONTENIDO.firebase && CONTENIDO.firebase.equipo) || 'local',
     avance: m.avance,
     certificado: m.certificado,
@@ -164,7 +158,9 @@ function miFicha() {
 /* Sincroniza en segundo plano. Si falla, queda marcado como pendiente y se
    reintenta la próxima vez que se abra la app. */
 async function sincronizar(silencioso) {
-  if (!nubeActiva() || !E.nombre) return { ok: false, motivo: 'sin-config' };
+  // El supervisor puede recorrer la inducción, pero no figura como alumno.
+  if (!SESION || esAdmin()) return { ok: false, motivo: 'admin' };
+  if (!nubeActiva()) return { ok: false, motivo: 'sin-config' };
   const r = await nubeGuardar(miFicha());
   E.sync = { fecha: new Date().toISOString(), ok: r.ok, motivo: r.motivo || '' };
   guardar();
@@ -210,11 +206,6 @@ function decodificarFicha(codigo) {
 /* ---------------------------------------------------------------- */
 async function compartirAvance() {
   const caja = $('#fbCompartir');
-  if (!E.nombre) {
-    caja.innerHTML = devolucion(false, 'Escribí tu nombre primero: es lo que ve el supervisor.');
-    $('#miNombre').focus();
-    return;
-  }
 
   if (nubeActiva()) {
     caja.innerHTML = '<p class="sub">Enviando…</p>';

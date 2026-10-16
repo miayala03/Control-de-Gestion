@@ -29,18 +29,26 @@ const CONTENIDO = {
   },
 
   /* ------------------------------------------------------------------ */
-  /* Acceso del supervisor                                               */
+  /* Usuarios                                                            */
+  /*                                                                     */
+  /* Al abrir la app se ingresa con usuario y contraseña. El rol decide  */
+  /* qué ve cada uno:                                                    */
+  /*   'admin'       → el panel del equipo: seguimiento y estándares.    */
+  /*   'trabajador'  → la inducción: entrenar, turno, tablero.           */
+  /* Para sumar a alguien, copiá una línea y cambiale los datos. El      */
+  /* usuario no distingue mayúsculas; la contraseña sí.                  */
   /*                                                                     */
   /* OJO: esto NO es seguridad de verdad. Como la app es un sitio        */
-  /* estático sin servidor, el PIN viaja dentro del código y cualquiera  */
-  /* que sepa mirar puede encontrarlo. Sirve para separar dos modos de   */
-  /* uso, no para proteger datos. Cambiá el PIN acá.                     */
+  /* estático sin servidor, las contraseñas viajan dentro del código y   */
+  /* quien sepa mirar puede encontrarlas. Sirve para la demostración:    */
+  /* no uses contraseñas reales.                                         */
   /* ------------------------------------------------------------------ */
-  supervisor: {
-    pin: '55555',
-    titulo: 'Acceso supervisor',
-    ayuda: 'Panel de seguimiento de la inducción del equipo.'
-  },
+  usuarios: [
+    { usuario: 'supervisor', clave: 'admin123', nombre: 'Supervisor del local', rol: 'admin' },
+    { usuario: 'miguel',     clave: 'stock123', nombre: 'Miguel Ayala',         rol: 'trabajador' },
+    { usuario: 'katherine',  clave: 'stock123', nombre: 'Katherine Espinola',   rol: 'trabajador' },
+    { usuario: 'lucas',      clave: 'stock123', nombre: 'Lucas González',       rol: 'trabajador' }
+  ],
 
   /* ------------------------------------------------------------------ */
   /* Base de datos del equipo (Firebase Firestore) — OPCIONAL            */

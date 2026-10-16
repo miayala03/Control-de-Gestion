@@ -24,7 +24,43 @@
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Inter:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="estilos.css">
 </head>
-<body>
+<body class="sin-sesion">
+
+<!-- ============ INGRESO ============ -->
+<div class="login" id="login">
+  <div class="login-in">
+    <div class="login-marca">
+      <img class="login-logo" src="iconos/icono-192.png" alt="">
+      <div class="kicker">McDonald's · Cocina</div>
+      <h1>Inducción<br><em>Stock de Cocina</em></h1>
+      <p>Simulador del puesto de Encargado de Stock. Ingresá con la cuenta que te dio tu supervisor.</p>
+    </div>
+
+    <form class="card login-form" id="formLogin" novalidate>
+      <h2>Ingresar</h2>
+      <div class="campo">
+        <label for="lgUsuario">Usuario</label>
+        <input class="campo-texto" id="lgUsuario" name="username" autocomplete="username"
+               autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Tu usuario">
+      </div>
+      <div class="campo">
+        <label for="lgClave">Contraseña</label>
+        <div class="clave-caja">
+          <input class="campo-texto" id="lgClave" name="password" type="password"
+                 autocomplete="current-password" placeholder="Tu contraseña">
+          <button type="button" class="ver-clave" id="lgVer" aria-label="Mostrar contraseña">Ver</button>
+        </div>
+      </div>
+      <div id="lgError" role="alert"></div>
+      <button class="btn" type="submit">Ingresar</button>
+      <p class="login-ayuda">¿No tenés usuario? Pedíselo a tu supervisor.</p>
+    </form>
+
+    <p class="login-pie">Proyecto final · Control de Gestión · Ing. en Sistemas de Producción<br>
+      Trabajo académico. No es material oficial de McDonald's.</p>
+  </div>
+</div>
+
 
 <div class="topbar">
   <div class="in">
@@ -34,6 +70,7 @@
       <strong id="tbTitulo">Inducción · Stock de Cocina</strong>
       <small id="tbSub">McDonald's · Cocina</small>
     </div>
+    <button class="user-btn" id="btnUsuario" aria-label="Sesión"></button>
   </div>
 </div>
 
@@ -50,7 +87,7 @@
     <p><b>Simulador de inducción</b> — Encargado de Stock de Cocina.<br>
     Proyecto final · Control de Gestión · Ing. en Sistemas de Producción.</p>
     <p class="aviso" id="avisoLegal"></p>
-    <p><button class="link-sup" id="accesoSupervisor">Acceso supervisor</button></p>
+    <p><button class="link-sup" id="cerrarSesion">Cerrar sesión</button></p>
   </footer>
 </main>
 
@@ -90,6 +127,7 @@
 </div>
 
 <script src="contenido.js"></script>
+<script src="sesion.js"></script>
 <script src="app.js"></script>
 <script src="nube.js"></script>
 <script src="estaciones.js"></script>

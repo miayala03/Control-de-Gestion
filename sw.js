@@ -1,12 +1,13 @@
 /* Service worker: permite usar la app sin internet una vez abierta.
    Si cambiás archivos y no ves los cambios en el celular, subí el número
    de version (por ejemplo v5, v6...) y volvé a subir a GitHub.        */
-const VERSION = 'induccion-v4';
+const VERSION = 'induccion-v5';
 const ARCHIVOS = [
   './',
   './index.html',
   './estilos.css',
   './contenido.js',
+  './sesion.js',
   './app.js',
   './nube.js',
   './estaciones.js',

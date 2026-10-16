@@ -7,26 +7,40 @@ const CLAVE = 'induccion-stock-v2';
 
 const estadoInicial = () => ({
   inicio: hoyISO(),
-  nombre: '',       // lo pone la persona para que el supervisor la identifique
+  nombre: '',       // sale de la cuenta con la que se ingresó
   sync: null,       // { fecha, ok } de la última sincronización
   estaciones: {},   // id -> { mejor: 0..100, intentos: n }
   turnos: [],       // { fecha, puntaje, mermaPct, quiebres, exactitud }
   examen: null      // { nota, aprobado, fecha }
 });
 
-let E = cargar();
+// Se carga al ingresar: cada cuenta tiene su propio avance (ver sesion.js).
+let E = estadoInicial();
 
 function hoyISO() { return new Date().toISOString().slice(0, 10); }
 
+function claveAvance() { return CLAVE + ':' + SESION.usuario.toLowerCase(); }
+
 function cargar() {
   try {
-    const crudo = localStorage.getItem(CLAVE);
+    let crudo = localStorage.getItem(claveAvance());
+    // El avance de antes de que hubiera usuarios lo hereda la primera
+    // cuenta de trabajador que ingresa en este teléfono.
+    if (!crudo && !esAdmin()) {
+      const viejo = localStorage.getItem(CLAVE);
+      if (viejo) {
+        crudo = viejo;
+        localStorage.setItem(claveAvance(), viejo);
+        localStorage.removeItem(CLAVE);
+      }
+    }
     if (!crudo) return estadoInicial();
     return Object.assign(estadoInicial(), JSON.parse(crudo));
   } catch (e) { return estadoInicial(); }
 }
 function guardar() {
-  try { localStorage.setItem(CLAVE, JSON.stringify(E)); } catch (e) {}
+  if (!SESION) return;
+  try { localStorage.setItem(claveAvance(), JSON.stringify(E)); } catch (e) {}
 }
 
 /* ---------------------------------------------------------------- */
@@ -163,7 +177,7 @@ function renderInicio() {
 
   $('#v-inicio').innerHTML = `
     <div class="hero">
-      <div class="kicker">Inducción · Personal nuevo</div>
+      <div class="kicker">Hola, ${esc(E.nombre.split(' ')[0])} · Personal nuevo</div>
       <h1>Tu puesto: <em>${esc(p.puesto)}</em></h1>
       <p>Acá no se lee un manual: se practica el puesto. Entrená las ocho estaciones, simulá un turno y certificate.</p>
       <div class="anillo-fila">
@@ -210,18 +224,18 @@ function renderInicio() {
 
     <div class="sec">
       <div class="sec-head">
-        <div class="kicker">Tu ficha</div>
-        <h2>Tu nombre y tu avance</h2>
+        <div class="kicker">Tu cuenta</div>
+        <h2>Tu avance y el supervisor</h2>
       </div>
       <div class="card">
-        <p class="sub" style="margin-top:0">Poné tu nombre para que el supervisor sepa de quién es este avance.</p>
-        <div class="campo">
-          <label>Nombre y apellido</label>
-          <input class="campo-texto" id="miNombre" value="${esc(E.nombre || '')}" placeholder="Ej.: Lucas González" maxlength="40">
+        <div class="ficha-usuario">
+          <span class="avatar">${esc(iniciales(SESION.nombre))}</span>
+          <div><b>${esc(SESION.nombre)}</b><small>Usuario: ${esc(SESION.usuario)} · ${esc(ROTULO_ROL[SESION.rol] || SESION.rol)}</small></div>
         </div>
         <div id="estadoSync"></div>
         <div class="btn-row">
-          <button class="btn sm" id="compartirAvance">Compartir mi avance</button>
+          ${esAdmin() ? '' : '<button class="btn sm" id="compartirAvance">Compartir mi avance</button>'}
+          <button class="btn sm ghost" id="salirInicio">Cerrar sesión</button>
         </div>
         <div id="fbCompartir"></div>
       </div>
@@ -256,14 +270,14 @@ function renderInicio() {
     };
   });
 
-  $('#miNombre').oninput = ev => { E.nombre = ev.target.value.trim(); guardar(); };
-  $('#compartirAvance').onclick = () => compartirAvance();
+  if ($('#compartirAvance')) $('#compartirAvance').onclick = () => compartirAvance();
+  $('#salirInicio').onclick = () => cerrarSesion();
   refrescarEstadoSync();
 
   $('#instalarApp').onclick = () => abrirInstalacion();
   $('#borrarTodo').onclick = () => {
     if (confirm('¿Borrar todo tu avance (estaciones, turnos y certificación)? No se puede deshacer.')) {
-      E = estadoInicial(); guardar(); ir('inicio');
+      E = estadoInicial(); E.nombre = SESION.nombre; guardar(); ir('inicio');
     }
   };
 
@@ -478,17 +492,13 @@ function iniciarInstalacion() {
 /* ---------------------------------------------------------------- */
 document.addEventListener('DOMContentLoaded', () => {
   aplicarEstandares();          // el supervisor puede haber cambiado las metas
-  actualizarPestanaSupervisor();
 
   $$('.nav button').forEach(b => b.onclick = () => ir(b.dataset.ir));
   $('#btnVolver').onclick = () => ir(vistaActual === 'examen' ? 'tablero' : 'entrenar');
-  $('#accesoSupervisor').onclick = () => ir('admin');
+  $('#avisoLegal').textContent = CONTENIDO.proyecto.aviso;
 
-  ir('inicio');
-
-  // Si quedó algo sin sincronizar de la sesión anterior, se reintenta.
-  if (nubeActiva() && E.nombre && !(E.sync && E.sync.ok)) sincronizar(true);
-  if (modoSupervisor()) refrescarNube(false);
+  // Pide usuario y contraseña, o entra directo si la sesión sigue abierta.
+  iniciarSesion();
   iniciarInstalacion();
 
   if ('serviceWorker' in navigator) {

@@ -490,23 +490,6 @@ body.es-supervisor .icon-btn{background:#2A211A;border-color:#3A2E24;color:#fff}
 .fila-estado .estado-pin{margin-top:0}
 .fila-estado .btn{margin-left:auto}
 
-/* teclado de PIN */
-.pin-puntos{display:flex;gap:11px;justify-content:center;margin:16px 0 14px}
-.pin-puntos span{
-  width:13px;height:13px;border-radius:50%;background:var(--surface-3);
-  border:1.5px solid var(--line-2);transition:background .15s,transform .15s;
-}
-.pin-puntos span.lleno{background:var(--rojo);border-color:var(--rojo);transform:scale(1.12)}
-.teclado{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:6px}
-.teclado button{
-  background:var(--surface);border:1.5px solid var(--line);border-radius:13px;
-  padding:15px 0;font-size:1.25rem;font-weight:700;cursor:pointer;font-family:var(--mono);
-  transition:transform .1s,background .15s;
-}
-.teclado button:active{transform:scale(.95);background:var(--surface-2)}
-.teclado button.aux{font-family:var(--sans);font-size:1.05rem;color:var(--ink-3)}
-.teclado button.ok{background:var(--ink);border-color:var(--ink);color:#fff}
-
 /* campos de texto */
 .campo-texto{
   width:100%;background:var(--surface);border:1.5px solid var(--line);border-radius:11px;
@@ -559,6 +542,57 @@ textarea.campo-texto{font-family:var(--mono);font-size:.76rem;word-break:break-a
   background:var(--surface-2);border:1px solid var(--line);vertical-align:-6px;margin:0 2px;font-size:.85rem}
 .inst-nota{margin-top:16px;background:var(--surface-2);border:1px solid var(--line);border-radius:11px;
   padding:11px 13px;font-size:.8rem;color:var(--ink-2)}
+
+/* ---------------------------------------------------------------- */
+/* Ingreso con usuario y contraseña                                  */
+/* ---------------------------------------------------------------- */
+.login{display:none}
+body.sin-sesion .login{
+  display:flex;min-height:100vh;min-height:100dvh;
+  background:radial-gradient(120% 60% at 100% 0%,rgba(255,188,13,.22),transparent 60%),
+             linear-gradient(170deg,#2A1D16 0%,#1A1410 55%);
+  padding:calc(28px + env(safe-area-inset-top)) 16px calc(24px + env(safe-area-inset-bottom));
+}
+body.sin-sesion .topbar,body.sin-sesion main,body.sin-sesion .nav,body.sin-sesion .inst-banner{display:none}
+.login-in{width:100%;max-width:400px;margin:auto;display:flex;flex-direction:column;gap:22px}
+.login-marca{color:#fff}
+.login-logo{width:52px;height:52px;border-radius:14px;box-shadow:0 10px 24px -12px rgba(0,0,0,.7);margin-bottom:16px}
+.login-marca .kicker{color:var(--amarillo)}
+.login-marca h1{font-size:2rem;margin-top:8px}
+.login-marca h1 em{font-style:normal;color:var(--amarillo)}
+.login-marca p{color:#D9CCBE;font-size:.88rem;margin-top:10px}
+.login-form{padding:22px 20px;box-shadow:var(--sombra-alta)}
+.login-form h2{font-size:1.15rem}
+.login-form .btn{margin-top:18px}
+.login-form .feedback{margin-top:14px}
+.login-form .campo-texto{font-size:1rem;padding:13px 14px}
+.clave-caja{position:relative}
+.clave-caja .campo-texto{padding-right:78px}
+.ver-clave{
+  position:absolute;right:6px;top:50%;transform:translateY(-50%);
+  background:var(--surface-3);border:none;border-radius:8px;padding:7px 11px;
+  font-size:.74rem;font-weight:700;color:var(--ink-2);cursor:pointer;
+}
+.login-ayuda{margin-top:14px;font-size:.78rem;color:var(--ink-3);text-align:center}
+.login-pie{color:#8C7B69;font-size:.7rem;text-align:center;line-height:1.6}
+.sacudir{animation:sacudir .35s ease}
+@keyframes sacudir{20%,60%{transform:translateX(-7px)}40%,80%{transform:translateX(7px)}}
+
+/* avatar de la sesión */
+.user-btn{
+  flex:none;width:34px;height:34px;border-radius:50%;border:none;cursor:pointer;
+  background:var(--rojo);color:#fff;font-weight:800;font-size:.76rem;letter-spacing:.02em;
+  display:flex;align-items:center;justify-content:center;
+}
+.user-btn:active{transform:scale(.95)}
+body.es-supervisor .user-btn{background:var(--amarillo);color:var(--ink)}
+.ficha-usuario{display:flex;align-items:center;gap:12px}
+.ficha-usuario .avatar{
+  flex:none;width:44px;height:44px;border-radius:50%;background:var(--rojo);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.92rem;
+}
+.ficha-usuario b{display:block;font-size:.98rem}
+.ficha-usuario small{display:block;font-size:.76rem;color:var(--ink-3)}
 
 /* ---------------------------------------------------------------- */
 footer{margin-top:32px;padding-top:16px;border-top:1px solid var(--line);color:var(--ink-3);font-size:.77rem}

@@ -135,13 +135,14 @@ las llaves.
 
 ## Paso 6 · Comprobar que funciona
 
-1. Abrí la app y bajá hasta el pie de cualquier pantalla: **Acceso supervisor**.
-2. Poné el PIN (viene `2468`; se cambia en `contenido.js`, bloque `supervisor`).
+1. Abrí la app e ingresá con la cuenta de supervisor (viene `supervisor` / `admin123`; las cuentas
+   se cambian en `contenido.js`, bloque `usuarios`).
+2. Entrás directo al panel **Equipo**.
 3. Bajá hasta **Conexión** y apretá **Probar la conexión**.
    - Si dice **"Conectado"**, ya está.
    - Si da error, mirá la tabla de abajo.
-4. Ahora pedile a alguien que abra la app, escriba su nombre en *Inicio* y toque **Compartir mi
-   avance**. Volvé al panel, apretá **Actualizar** y tiene que aparecer en la lista.
+4. Ahora pedile a alguien que abra la app e ingrese con su usuario de trabajador. Volvé al panel,
+   apretá **Actualizar** y tiene que aparecer con su avance (antes figuraba como *Sin ingresar*).
 
 ---
 
@@ -151,7 +152,7 @@ las llaves.
 |---|---|---|
 | *"La base contestó que no está permitido"* | Las reglas están cerradas o vencidas | Rehacé el **paso 3** |
 | *"No hubo respuesta"* | Sin internet, o el `projectId` está mal escrito | Revisá la conexión y que el ID sea el del paso 1 |
-| Conecta, pero no aparece nadie | Todavía nadie sincronizó, **o** cargaste la configuración solo en tu dispositivo | Cada persona tiene que poner su nombre y tocar *Compartir mi avance*. Y la configuración tiene que estar en `contenido.js`, subida a GitHub |
+| Conecta, pero no aparece nadie | Todavía nadie sincronizó, **o** cargaste la configuración solo en tu dispositivo | Cada persona tiene que ingresar con su usuario (o tocar *Compartir mi avance*). Y la configuración tiene que estar en `contenido.js`, subida a GitHub |
 | Andaba y de golpe dejó de andar | Se vencieron las reglas del modo de prueba | Rehacé el **paso 3** |
 
 ---
